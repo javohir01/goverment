@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Citizen;
-use App\Models\User;
 use Illuminate\Http\Request;
 
-class CitizenController extends Controller
+class UsersController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,10 +13,7 @@ class CitizenController extends Controller
      */
     public function index()
     {
-//        $users = User::paginate(10);
-//        return view('users.index', compact('users'));
-//        return redirect()->route('users.index', ['users' => $users]);
-
+        //
     }
 
     /**
@@ -45,10 +40,10 @@ class CitizenController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Citizen  $citizen
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Citizen $citizen)
+    public function show($id)
     {
         //
     }
@@ -56,10 +51,10 @@ class CitizenController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Citizen  $citizen
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Citizen $citizen)
+    public function edit($id)
     {
         //
     }
@@ -68,10 +63,10 @@ class CitizenController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Citizen  $citizen
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Citizen $citizen)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -79,10 +74,10 @@ class CitizenController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Citizen  $citizen
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Citizen $citizen)
+    public function destroy($id)
     {
         //
     }

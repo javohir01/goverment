@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
+    private $response;
+
     /**
      * Create a new AuthController instance.
      *
@@ -15,6 +18,12 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login']]);
+
+        $this->response = [
+            'success' => true,
+            'result' => [],
+            'error' => []
+        ];
     }
 
     /**
@@ -26,10 +35,12 @@ class AuthController extends Controller
     {
         $credentials = request(['login', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (! $token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-//        dd($token);
+        $this->response['success'] = true;
+        $this->response['result'] = $this->withToken($token);
+//        dd($this->response['result']);
         return $this->respondWithToken($token);
     }
 
@@ -68,17 +79,31 @@ class AuthController extends Controller
     /**
      * Get the token array structure.
      *
-     * @param  string $token
+     * @param string $token
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function respondWithToken(string $token): \Illuminate\Http\JsonResponse
     {
-//        dd($token);
+        $user = Auth::user();
         return response()->json([
             'access_token' => $token,
+            'user' => $user,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
+    }
+
+    protected function withToken($token)
+    {
+
+        $user = Auth::user();
+
+        return [
+            'access_token' => $token,
+            'user' => $user,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::factory()->getTTL() * 60
+        ];
     }
 }
