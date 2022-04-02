@@ -29,3 +29,16 @@ Route::group([
     Route::apiResource('users', 'UsersController');
 
 });
+Route::middleware(['auth:api'])->group(function () {
+    Route::group(['prefix' => 'citizens'], function () {
+        Route::get('/', 'Api\CitizenController@index');
+        Route::post('/store', 'Api\CitizenController@store');
+        Route::get('/show/{id}', 'Api\CitizenController@show');
+        Route::put('/update/{id}', 'Api\CitizenController@update');
+    });
+});
+
+Route::group(['prefix' => 'resources'], function () {
+    Route::get('regions', 'Api\ResourceController@regions');
+    Route::get('districts', 'Api\ResourceController@districts');
+});

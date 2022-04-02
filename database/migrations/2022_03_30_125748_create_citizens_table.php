@@ -19,12 +19,12 @@ class CreateCitizensTable extends Migration
             $table->string('l_name', 30);
             $table->string('m_name', 30);
 
-            $table->string('passport', 9);
+            $table->string('passport', 9)->unique();
             $table->string('pin',14);
             $table->date('birth_date')->nullable();
 
-            $table->string('region');
-            $table->string('district');
+            $table->integer('region_id')->nullable();
+            $table->integer('district_id')->nullable();
             $table->string('address');
 
             $table->timestamps();

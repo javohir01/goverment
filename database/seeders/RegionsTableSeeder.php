@@ -28,7 +28,7 @@ class RegionsTableSeeder extends Seeder
             ['id' => '18','name_uz' => 'Qashqadaryo viloyati','name_ru' => 'Кашкадарьинская область','name_en' => 'Kashkadarya Region','name_cyrl' => 'Қашқадарё вилояти','c_order' => '5','soato' => '1710', 'ns10_code' => 10],
             ['id' => '19','name_uz' => 'Jizzax viloyati','name_ru' => 'Джизакская область','name_en' => 'Jizzakh Region','name_cyrl' => 'Жиззах вилояти','c_order' => '4','soato' => '1708', 'ns10_code' => 8],
             ['id' => '21','name_uz' => 'Namangan viloyati','name_ru' => 'Наманганская область','name_en' => 'Namangan Region','name_cyrl' => 'Наманган вилояти','c_order' => '7','soato' => '1714', 'ns10_code' => 14],
-            ['id' => '22','name_uz' => 'Toshkent shahri','name_ru' => 'город Ташкент','name_en' => 'Tashkent City','name_cyrl' => 'Тошкент шаҳри','c_order' => '14','soato' => '1726', 'ns10_code' => 26]
+            ['id' => '22','name_uz' => 'Toshkent shahri','name_ru' => 'город Ташкент','name_en' => 'Tashkent District','name_cyrl' => 'Тошкент шаҳри','c_order' => '14','soato' => '1726', 'ns10_code' => 26]
         ];
         DB::table('regions')->insert($regions);
     }
