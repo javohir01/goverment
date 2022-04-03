@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Citizen extends Model
 {
+    const ADMIN = 1;
+    const REGION = 2;
+    const DISTRICT = 3;
+    protected $table = 'citizens';
+
+    protected $fillable = ['f_name', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'remember_token', 'created_at', 'updated_at',];
+
     protected $guarded = ['id'];
 
     public static function rules()
@@ -53,8 +60,8 @@ class Citizen extends Model
             return $query->where('citizens.district_id', '=', $district_id);
         })->when($attributes['l_name'] ?? null, function (Builder $query, $l_name) {
             return $query->where('citizens.l_name', 'like', $l_name.'%');
-        })->when($attributes['firstname'] ?? null, function (Builder $query, $firstname) {
-            return $query->where('citizens.firstname', '=', $firstname);
+        })->when($attributes['f_name'] ?? null, function (Builder $query, $firstname) {
+            return $query->where('citizens.f_name', 'like', $f_name.'%');
         })->when($attributes['patronymic'] ?? null, function (Builder $query, $patronymic) {
             return $query->where('citizens.patronymic', '=', $patronymic);
         })->when($attributes['passport'] ?? null, function (Builder $query, $passport) {

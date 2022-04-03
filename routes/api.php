@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 //});
 
 Route::group([
+    'middleware' => 'api',
     'prefix' => 'auth'
 ], function ($router) {
 
@@ -33,8 +34,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::group(['prefix' => 'citizens'], function () {
         Route::get('/', 'Api\CitizenController@index');
         Route::post('/store', 'Api\CitizenController@store');
-        Route::get('/show/{id}', 'Api\CitizenController@show');
+        Route::get('/{id}', 'Api\CitizenController@show');
         Route::put('/update/{id}', 'Api\CitizenController@update');
+        Route::put('/destroy/{id}', 'Api\CitizenController@destroy');
+
     });
 });
 

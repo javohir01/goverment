@@ -8,6 +8,14 @@ class Region extends Model
 {
     protected $guarded = [];
 
-    public function citizens() {
-        return $this->hasMany('App\Models\Citizen');
-    }}
+//    public function citizens() {
+//        return $this->hasMany('App\Models\Citizen','id');
+//    }
+//
+//    public function citizens() {
+//        return $this->hasMany(Citizen::class,'id');
+//
+//    }
+}
+
+

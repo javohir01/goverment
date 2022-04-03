@@ -6,17 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Repositories\CitizenRepository;
 use App\Services\CitizenService;
 use Illuminate\Http\Request;
-use function response;
 
 class CitizenController extends Controller
 {
     public $modelClass;
     private $repo;
     private $service;
-    protected $response;
     public function __construct()
     {
-        $this->middleware('logs', ['only' => ['show', 'passport', 'passportDataFromBase']]);
+//        $this->middleware('logs', ['only' => ['show', 'passport', 'passportDataFromBase']]);
         $this->modelClass = new Citizen;
         $this->repo = new CitizenRepository;
         $this->service = new CitizenService();
@@ -36,11 +34,15 @@ class CitizenController extends Controller
     {
         $citizen = $this->service->show($id);
         $this->response['result'] = [
-            'citizen' => $citizen
+            'citizen' => $citizen,
+            'success' => true
+        ];
+        $response['result'] = [
+            'citizen' => $citizen,
+            'success' => true,
         ];
         return response()->json($this->response);
     }
-
     public function update(Request $request, $id)
     {
         $citizen = $this->service->update($request, $id);
@@ -48,6 +50,17 @@ class CitizenController extends Controller
         return $citizen;
     }
 
-
+    public function destroy($id)
+    {
+        $citizen = $this->repo->getById($id);
+        if ($citizen) {
+            $citizen->delete();
+            $this->response['success'] = true;
+        } else {
+            $this->response['success'] = false;
+            $this->response['error'] = "Citizen not found";
+        }
+        return response()->json($this->response);
+    }
 
 }
