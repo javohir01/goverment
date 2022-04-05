@@ -6,7 +6,7 @@ namespace App\Repositories;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
-use App\Citizen;
+use App\Models\Citizen;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -42,39 +42,58 @@ class CitizenRepository
             'birth_date' => $request->birth_date,
             'region_id' => $user->region_id,
             'district_id' => $user->district_id,
+            'social_id' => $request->social_id,
             'address' => $request->address,
             'passport' => $request->passport,
             'pin' => $request->pin,
             'created_at' => Carbon::now()->format('Y-m-d'),
         ]);
 
-
         $data['citizen']=$citizen;
         return $data;
     }
 
+    public function guard()
+    {
+        return Auth::guard();
+    }
+
     public function update($request, $id)
     {
-        $citizen = $this->getById($id);
+        $citizen  = Citizen::find($id);
 
-        return $user->is_read;
-//        $data['citizen']=$citizen;
+        $user = $this->guard()->user();
 
+        $citizen->update([
+            'f_name' => $request->f_name,
+            'l_name' => $request->l_name,
+            'm_name' => $request->m_name,
+            'birth_date' => $request->birth_date,
+            'region_id' => $user->region_id,
+            'district_id' => $user->district_id,
+            'address' => $request->address,
+            'passport' => $request->passport,
+            'pin' => $request->pin,
+            'created_at' => Carbon::now()->format('Y-m-d'),
+        ]);
+
+        $data['citizen']=$citizen;
         return $data;
     }
 
     public function toValidate($array, $status = null)
     {
         $rules = [
-            'f_name' => 'nullable',
-            'l_name' => 'nullable',
-            'm_name' => 'nullable',
-            'birth_date' => 'nullable',
+            'f_name' => 'required',
+            'l_name' => 'required',
+            'm_name' => 'required',
+            'birth_date' => 'required',
             'region_id' => 'nullable',
             'district_id' => 'nullable',
-            'address' => 'nullable',
-            'passport' => 'nullable',
-            'pin' => 'nullable',
+            'social_id' => 'required',
+            'address' => 'required',
+            'passport' => 'required',
+            'pin' => 'required',
             'remember_token' => 'nullable',
             'created_at' => 'nullable',
             'updated_at' => 'nullable',
@@ -82,6 +101,21 @@ class CitizenRepository
         ];
         $validator = Validator::make($array, $rules);
         return $validator;
+    }
+
+    public function checkCitizen($passport, $id = NULL)
+    {
+        $passport = str_replace(' ', '', $passport);
+        $citizen = $this->getQuery()->where([
+            ['passport', $passport]
+        ]);
+
+        if ($id) {
+            $citizen->where('id', '!=', $id);
+        }
+
+        $citizen = $citizen->first();
+        return $citizen ? true : false;
     }
 
 //    public function citizenOutOfReport($request)

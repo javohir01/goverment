@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-use App\Citizen;
+use App\Models\Citizen;
 use App\Http\Controllers\Controller;
 use App\Repositories\CitizenRepository;
 use App\Services\CitizenService;
@@ -22,6 +22,13 @@ class CitizenController extends Controller
     public function index(Request $request)
     {
         $citizens = $this->service->getAll($request);
+
+//        $citizens = Citizen::query()->get();
+//        if($request->has('getAll')){
+//            $citizens = $citizens->paginate($citizens->count());
+//        } else {
+//            $citizens = $citizens->paginate($request->get('limit', 30));
+//        }
         return response()->successJson(['citizens' => $citizens]);
     }
 
@@ -33,6 +40,7 @@ class CitizenController extends Controller
     public function show($id)
     {
         $citizen = $this->service->show($id);
+
         $this->response['result'] = [
             'citizen' => $citizen,
             'success' => true
@@ -45,9 +53,13 @@ class CitizenController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $citizen = $this->service->update($request, $id);
+//        dd($request);
+//        $citizen = $this->service->update($request, $id);
+//
+//        return $citizen;
+        $result = $this->service->update($request, $id);
 
-        return $citizen;
+        return response()->successJson($result['citizen']);
     }
 
     public function destroy($id)

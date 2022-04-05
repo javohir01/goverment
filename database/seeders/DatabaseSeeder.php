@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
 //        $this->call(RegionsTableSeeder::class);
 //        $this->call(DistrictsTableSeeder::class);
         $this->call(CitizenSeeder::class);
+//        $this->call(socialStatusSeeder::class);
 
     }
 }

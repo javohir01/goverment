@@ -12,8 +12,19 @@ class Role extends Model
 
     public $primaryKey = 'id';
 
-    public $timestamps = true;
+    const ADMIN = 1;
+    const REGION = 2;
+    const DISTRICT = 3;
 
-    protected $fillable = [
-        'name'
-    ];}
+    public $timestamps = false;
+
+    protected $fillable = ['user_id', 'role'];
+
+    public static function rules()
+    {
+        return [
+            'user_id' => 'integer|nullable',
+            'role' => 'string|nullable',
+        ];
+    }
+}

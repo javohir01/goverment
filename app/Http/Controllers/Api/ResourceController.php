@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Region\IndexRequest as RegionRequest;
 use App\Http\Requests\District\IndexRequest as DistrictRequest;
+use App\Models\District;
+use App\Models\Region;
+use App\Models\SocialStatus;
 use App\Services\DistrictService;
 use App\Services\RegionService;
+use Illuminate\Http\Request;
 
 class ResourceController extends Controller
 {
@@ -21,7 +25,7 @@ class ResourceController extends Controller
 
     public function regions(RegionRequest $request)
     {
-        $params = $request->validated();
+//        $params = $request->validated();
 //        return [
 //            'current_page' => $request->page ?? 1,
 //            'per_page' => $request->limit,
@@ -29,14 +33,30 @@ class ResourceController extends Controller
 //                ->get(),
 ////            'total' => $query->count() < $request->limit ? $citizens->count() : -1
 //        ];
-////        dd($this->regionService->get($params));
-        return response()->successJson($this->regionService->get($params));
+//        dd($this->regionService->get($params));
+        $regions = Region::all();
+        return response()->successJson(['regions' => $regions]);
+//        return response()->successJson($this->regionService->get($params));
     }
 
-    public function districts(DistrictRequest $request)
+//    public function districts(DistrictRequest $request)
+//    {
+//        $params = $request->validated();
+////        dd($request);
+//        return response()->successJson($this->districtService->get($params));
+//    }
+    public function districts(Request $request)
     {
-        $params = $request->validated();
-//        dd($request);
-        return response()->successJson($this->districtService->get($params));
+        $districts = District::query();
+        if (!empty($request->all()['region_id'])) {
+            $districts->where('region_id', $request->all()['region_id']);
+        }
+        $districts = $districts->get();
+        return response()->successJson(['districts' => $districts]);
+    }
+    public function socialStatuses(Request $request)
+    {
+        $social_statuses = SocialStatus::all();
+        return response()->successJson(['social_statuses' => $social_statuses]);
     }
 }

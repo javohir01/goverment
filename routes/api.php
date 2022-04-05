@@ -35,13 +35,19 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/', 'Api\CitizenController@index');
         Route::post('/store', 'Api\CitizenController@store');
         Route::get('/{id}', 'Api\CitizenController@show');
-        Route::put('/update/{id}', 'Api\CitizenController@update');
-        Route::put('/destroy/{id}', 'Api\CitizenController@destroy');
-
+        Route::put('/{id}', 'Api\CitizenController@update');
+        Route::delete('/{id}', 'Api\CitizenController@destroy');
+    });
+    Route::group(['prefix' => 'resources'], function () {
+        Route::get('regions', 'Api\ResourceController@regions');
+        Route::get('districts', 'Api\ResourceController@districts');
+        Route::get('socialStatuses', 'Api\ResourceController@socialStatuses');
+    });
+    Route::group(['prefix' => 'report'], function () {
+        Route::get('all', 'Api\ReportController@all');
+        Route::get('districts', 'Api\ResourceController@districts');
+        Route::get('socialStatuses', 'Api\ResourceController@socialStatuses');
     });
 });
 
-Route::group(['prefix' => 'resources'], function () {
-    Route::get('regions', 'Api\ResourceController@regions');
-    Route::get('districts', 'Api\ResourceController@districts');
-});
+
