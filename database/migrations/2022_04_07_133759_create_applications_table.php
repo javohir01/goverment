@@ -28,6 +28,7 @@ class CreateApplicationsTable extends Migration
             $table->integer('social_id');
 
             $table->integer('status');
+            $table->integer('number');
             $table->bigInteger('phone_number');
             $table->text('code');
             $table->string('address');
