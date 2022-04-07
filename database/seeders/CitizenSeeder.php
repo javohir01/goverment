@@ -248,7 +248,7 @@ class CitizenSeeder extends Seeder
                     'm_name' => $faker->name,
                     'birth_date' => $faker->dateTimeThisCentury->format('Y-m-d'),
                     'region_id' => $district->region_id,
-                    'city_id' => $district->id,
+                    'district_id' => $district->id,
                     'address' => $faker->address,
                     'social_id' => $social,
                     'passport' =>$letter.$pass.$pass_number,

@@ -7,6 +7,7 @@ use App\Http\Resources\ReportAgencyApplicationTwoResource;
 use App\ProfessionalDirection;
 use App\SectorCitizen;
 use App\Service;
+use http\Env\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,59 +18,69 @@ use App\Region;
 class ReportRepository
 {
     //Ҳудуд кесимида суғурта полиси берилган фуқаролар сони статистикаси
-    public function getRegionInsurance()
+    public function getRegion(Request $request)
     {
-//        $from_date = request()->get('from_date', null);
-//        $to_date = request()->get('to_date', null);
-//        if ($from_date and $to_date) {
-//            $start = date("Y-m-d", strtotime($from_date));
-//            $end = date('Y-m-d', strtotime($to_date));
-//            $report = DB::table('regions')
-//                ->join('users', 'users.region_id', '=', 'regions.id')
-//                ->leftJoin('citizen_services', function ($join) use ($start, $end) {
-//                    $join->on('users.id', '=', 'citizen_services.user_id');
-//                    $join->where('citizen_services.service_id', 2);
-//                    $join->where('citizen_services.created_at', '>=', $start . " 00:00:00");
-//                    $join->where('citizen_services.created_at', '<=', $end . " 23:59:59");
-//                });
-//        } else {
-//            $report = DB::table('regions')
-//                ->join('users', 'users.region_id', '=', 'regions.id')
-//                ->leftJoin('citizen_services', function ($join) {
-//                    $join->on('citizen_services.user_id', '=', 'users.id');
-//                    $join->where('citizen_services.service_id', 2);
-//                });
-//        }
-//        $report = $report->select('users.region_id', 'citizen_services.user_id', 'regions.name_cyrl as region',
-//            DB::raw("sum(case when citizen_services.service_id=2 then 1 else 0 end) as total"),
-//            DB::raw("sum(case when citizen_services.service_status_id = 5
-//            and citizen_services.service_id=2 then 1 else 0 end)  as counts"))
-//            ->whereNotNull(['citizen_services.user_id'])
-//            ->groupBy('regions.name_cyrl', 'users.region_id', 'citizen_services.user_id', 'regions.c_order')
-//            ->orderBy('regions.c_order');
-//
-//        $report = $report->get()->toArray();
-//        $sum = $this->getSumRegionInsurance();
-//        array_unshift($report, $sum);
-//        $all_data=['report'=>$report, 'report_user'=>$report_user];
-
-         $regions = [
-                    ['id' => '8','name_uz' => 'Qoraqalpog‘iston Respublikasi','name_ru' => 'Республика Каракалпакстан','name_en' => 'Karakalpakstan Republic','name_cyrl' => 'Қорақалпоғистон Республикаси','c_order' => '1','soato' => '1735', 'ns10_code' => 35],
-                    ['id' => '9','name_uz' => 'Buxoro viloyati','name_ru' => 'Бухарская область','name_en' => 'Bukhara Region','name_cyrl' => 'Бухоро вилояти','c_order' => '3','soato' => '1706', 'ns10_code' => 6],
-                    ['id' => '10','name_uz' => 'Samarqand viloyati','name_ru' => 'Самаркандская область','name_en' => 'Samarkand Region','name_cyrl' => 'Самарқанд вилояти','c_order' => '8','soato' => '1718', 'ns10_code' => 18],
-                    ['id' => '11','name_uz' => 'Navoiy viloyati','name_ru' => 'Навоийская область','name_en' => 'Navoiy Region','name_cyrl' => 'Навоий вилояти','c_order' => '6','soato' => '1712', 'ns10_code' => 12],
-                    ['id' => '12','name_uz' => 'Andijon viloyati','name_ru' => 'Андижанская область','name_en' => 'Andijan Region','name_cyrl' => 'Андижон вилояти','c_order' => '2','soato' => '1703', 'ns10_code' => 3],
-                    ['id' => '13','name_uz' => 'Farg‘ona viloyati','name_ru' => 'Ферганская область','name_en' => 'Fergana Region','name_cyrl' => 'Фарғона вилояти','c_order' => '12','soato' => '1730', 'ns10_code' => 30],
-                    ['id' => '14','name_uz' => 'Surxondaryo viloyati','name_ru' => 'Сурхандарьинская область','name_en' => 'Surkhandarya Region','name_cyrl' => 'Сурхондарё вилояти','c_order' => '10','soato' => '1722', 'ns10_code' => 22],
-                    ['id' => '15','name_uz' => 'Sirdaryo viloyati','name_ru' => 'Сырдарьинская область','name_en' => 'Syrdarya Region','name_cyrl' => 'Сирдарё вилояти','c_order' => '9','soato' => '1724', 'ns10_code' => 24],
-                    ['id' => '16','name_uz' => 'Xorazm viloyati','name_ru' => 'Хорезмская область','name_en' => 'Khorezm Region','name_cyrl' => 'Хоразм вилояти','c_order' => '13','soato' => '1733', 'ns10_code' => 33],
-                    ['id' => '17','name_uz' => 'Toshkent viloyati','name_ru' => 'Ташкентская область','name_en' => 'Tashkent Region','name_cyrl' => 'Тошкент вилояти','c_order' => '11','soato' => '1727', 'ns10_code' => 27],
-                    ['id' => '18','name_uz' => 'Qashqadaryo viloyati','name_ru' => 'Кашкадарьинская область','name_en' => 'Kashkadarya Region','name_cyrl' => 'Қашқадарё вилояти','c_order' => '5','soato' => '1710', 'ns10_code' => 10],
-                    ['id' => '19','name_uz' => 'Jizzax viloyati','name_ru' => 'Джизакская область','name_en' => 'Jizzakh Region','name_cyrl' => 'Жиззах вилояти','c_order' => '4','soato' => '1708', 'ns10_code' => 8],
-                    ['id' => '21','name_uz' => 'Namangan viloyati','name_ru' => 'Наманганская область','name_en' => 'Namangan Region','name_cyrl' => 'Наманган вилояти','c_order' => '7','soato' => '1714', 'ns10_code' => 14],
-                    ['id' => '22','name_uz' => 'Toshkent shahri','name_ru' => 'город Ташкент','name_en' => 'Tashkent District','name_cyrl' => 'Тошкент шаҳри','c_order' => '14','soato' => '1726', 'ns10_code' => 26]
-                ];
-        return $regions;
+        if (!empty($request->all()['region_id'])){
+            $region_id = $request->all()['region_id'];
+            $report = DB::table('citizens')
+                ->where('citizens.region_id','=' ,$region_id)
+                ->leftJoin('districts','citizens.district_id','=','district.id')
+                ->select(
+                    'districts.name_cyrl as region_name',
+                    'districts.id as region_id',
+                    DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
+                    DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
+                    DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),
+                    DB::raw("sum(case when citizens.social_id=4 then 1 else 0 end) as social4"),
+                    DB::raw("sum(case when citizens.social_id=5 then 1 else 0 end) as social5"),
+                    DB::raw("sum(case when citizens.social_id=6 then 1 else 0 end) as social6"),
+                    DB::raw("sum(case when citizens.social_id=7 then 1 else 0 end) as social7"),
+                    DB::raw("sum(case when citizens.social_id=8 then 1 else 0 end) as social8"),
+                    DB::raw("sum(case when citizens.social_id=9 then 1 else 0 end) as social9"),
+                    DB::raw("sum(case when citizens.social_id=10 then 1 else 0 end) as social10"),
+                    DB::raw("sum(case when citizens.social_id=11 then 1 else 0 end) as social11"),
+                    DB::raw("sum(case when citizens.social_id=12 then 1 else 0 end) as social12"),
+                    DB::raw("sum(case when citizens.social_id=13 then 1 else 0 end) as social13"),
+                    DB::raw("sum(case when citizens.social_id=14 then 1 else 0 end) as social14"),
+                    DB::raw("sum(case when citizens.social_id=15 then 1 else 0 end) as social15"),
+                    DB::raw("sum(case when citizens.social_id=16 then 1 else 0 end) as social16"),
+                    DB::raw("sum(case when citizens.social_id=17 then 1 else 0 end) as social17"),
+                    DB::raw("sum(case when citizens.social_id=18 then 1 else 0 end) as social18"),
+                )
+                ->groupBy('districts.id','districts.name_cyrl')
+                ->orderBy('districts.id')
+                ->get()->toArray();
+        }
+        else {
+            $report = DB::table('citizens')
+                ->leftJoin('regions', 'citizens.region_id', '=', 'regions.id')
+                ->select(
+                    'regions.name_cyrl as region_name',
+                    'regions.id as region_id',
+                    DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
+                    DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
+                    DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),
+                    DB::raw("sum(case when citizens.social_id=4 then 1 else 0 end) as social4"),
+                    DB::raw("sum(case when citizens.social_id=5 then 1 else 0 end) as social5"),
+                    DB::raw("sum(case when citizens.social_id=6 then 1 else 0 end) as social6"),
+                    DB::raw("sum(case when citizens.social_id=7 then 1 else 0 end) as social7"),
+                    DB::raw("sum(case when citizens.social_id=8 then 1 else 0 end) as social8"),
+                    DB::raw("sum(case when citizens.social_id=9 then 1 else 0 end) as social9"),
+                    DB::raw("sum(case when citizens.social_id=10 then 1 else 0 end) as social10"),
+                    DB::raw("sum(case when citizens.social_id=11 then 1 else 0 end) as social11"),
+                    DB::raw("sum(case when citizens.social_id=12 then 1 else 0 end) as social12"),
+                    DB::raw("sum(case when citizens.social_id=13 then 1 else 0 end) as social13"),
+                    DB::raw("sum(case when citizens.social_id=14 then 1 else 0 end) as social14"),
+                    DB::raw("sum(case when citizens.social_id=15 then 1 else 0 end) as social15"),
+                    DB::raw("sum(case when citizens.social_id=16 then 1 else 0 end) as social16"),
+                    DB::raw("sum(case when citizens.social_id=17 then 1 else 0 end) as social17"),
+                    DB::raw("sum(case when citizens.social_id=18 then 1 else 0 end) as social18"),
+                )
+                ->groupBy('regions.id', 'regions.name_cyrl')
+                ->orderBy('regions.id')
+                ->get()->toArray();
+        }
+        return response()->successJson(['report' => $report]);
     }
 
     public function getSumRegionInsurance()

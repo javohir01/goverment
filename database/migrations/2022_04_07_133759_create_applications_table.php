@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCitizensTable extends Migration
+class CreateApplicationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateCitizensTable extends Migration
      */
     public function up()
     {
-        Schema::create('citizens', function (Blueprint $table) {
+        Schema::create('applications', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('f_name', 30);
             $table->string('l_name', 30);
@@ -26,10 +26,11 @@ class CreateCitizensTable extends Migration
             $table->integer('region_id')->nullable();
             $table->integer('district_id')->nullable();
             $table->integer('social_id');
+
+            $table->integer('status');
             $table->bigInteger('phone_number');
             $table->text('code');
             $table->string('address');
-
             $table->timestamps();
         });
     }
@@ -41,6 +42,6 @@ class CreateCitizensTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('citizens');
+        Schema::dropIfExists('applications');
     }
 }

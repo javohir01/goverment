@@ -22,26 +22,140 @@ class ReportController extends Controller
     {
         $this->repo = new ReportRepository();
     }
-    public function all()
+    public function report(Request $request)
     {
-        $report = $this->repo->getRegionInsurance();
-
-        if ($report) {
-            $this->response['result'] = $report;
-         } else {
-            $this->response['success']=false;
+        if (!empty($request->all())){
+            $region_id = $request->all();
+            $report = DB::table('citizens')
+//                ->where('citizens.region_id' ,$region_id)
+                ->leftJoin('districts','citizens.district_id','=','district.id')
+                ->select(
+                    'districts.name_cyrl as region_name',
+                    'districts.id as region_id',
+                    DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
+                    DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
+                    DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),
+                    DB::raw("sum(case when citizens.social_id=4 then 1 else 0 end) as social4"),
+                    DB::raw("sum(case when citizens.social_id=5 then 1 else 0 end) as social5"),
+                    DB::raw("sum(case when citizens.social_id=6 then 1 else 0 end) as social6"),
+                    DB::raw("sum(case when citizens.social_id=7 then 1 else 0 end) as social7"),
+                    DB::raw("sum(case when citizens.social_id=8 then 1 else 0 end) as social8"),
+                    DB::raw("sum(case when citizens.social_id=9 then 1 else 0 end) as social9"),
+                    DB::raw("sum(case when citizens.social_id=10 then 1 else 0 end) as social10"),
+                    DB::raw("sum(case when citizens.social_id=11 then 1 else 0 end) as social11"),
+                    DB::raw("sum(case when citizens.social_id=12 then 1 else 0 end) as social12"),
+                    DB::raw("sum(case when citizens.social_id=13 then 1 else 0 end) as social13"),
+                    DB::raw("sum(case when citizens.social_id=14 then 1 else 0 end) as social14"),
+                    DB::raw("sum(case when citizens.social_id=15 then 1 else 0 end) as social15"),
+                    DB::raw("sum(case when citizens.social_id=16 then 1 else 0 end) as social16"),
+                    DB::raw("sum(case when citizens.social_id=17 then 1 else 0 end) as social17"),
+                    DB::raw("sum(case when citizens.social_id=18 then 1 else 0 end) as social18"),
+                )
+                ->groupBy('districts.id','districts.name_cyrl')
+                ->orderBy('districts.id')
+                ->get()->toArray();
         }
-        return response()->json($this->response);
+        else {
+            $report = DB::table('citizens')
+                ->leftJoin('regions', 'citizens.region_id', '=', 'regions.id')
+                ->select(
+                    'regions.name_cyrl as region_name',
+                    'regions.id as region_id',
+                    DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
+                    DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
+                    DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),
+                    DB::raw("sum(case when citizens.social_id=4 then 1 else 0 end) as social4"),
+                    DB::raw("sum(case when citizens.social_id=5 then 1 else 0 end) as social5"),
+                    DB::raw("sum(case when citizens.social_id=6 then 1 else 0 end) as social6"),
+                    DB::raw("sum(case when citizens.social_id=7 then 1 else 0 end) as social7"),
+                    DB::raw("sum(case when citizens.social_id=8 then 1 else 0 end) as social8"),
+                    DB::raw("sum(case when citizens.social_id=9 then 1 else 0 end) as social9"),
+                    DB::raw("sum(case when citizens.social_id=10 then 1 else 0 end) as social10"),
+                    DB::raw("sum(case when citizens.social_id=11 then 1 else 0 end) as social11"),
+                    DB::raw("sum(case when citizens.social_id=12 then 1 else 0 end) as social12"),
+                    DB::raw("sum(case when citizens.social_id=13 then 1 else 0 end) as social13"),
+                    DB::raw("sum(case when citizens.social_id=14 then 1 else 0 end) as social14"),
+                    DB::raw("sum(case when citizens.social_id=15 then 1 else 0 end) as social15"),
+                    DB::raw("sum(case when citizens.social_id=16 then 1 else 0 end) as social16"),
+                    DB::raw("sum(case when citizens.social_id=17 then 1 else 0 end) as social17"),
+                    DB::raw("sum(case when citizens.social_id=18 then 1 else 0 end) as social18"),
+                )
+                ->groupBy('regions.id', 'regions.name_cyrl')
+                ->orderBy('regions.id')
+                ->get()->toArray();
+        }
+        return response()->successJson(['report' => $report]);
     }
-    public function info_insurance_citizen($user_id)
+    public function regions()
     {
-        $report = $this->repo->getInfoInsuranceCitizen($user_id);
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
+        $report = DB::table('citizens')
+            ->leftJoin('regions', 'citizens.region_id', '=', 'regions.id');
+
+        $report = $report->select(
+            'regions.name_cyrl as region_name',
+            'regions.id as region_id',
+            DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
+            DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
+            DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),
+            DB::raw("sum(case when citizens.social_id=4 then 1 else 0 end) as social4"),
+            DB::raw("sum(case when citizens.social_id=5 then 1 else 0 end) as social5"),
+            DB::raw("sum(case when citizens.social_id=6 then 1 else 0 end) as social6"),
+            DB::raw("sum(case when citizens.social_id=7 then 1 else 0 end) as social7"),
+            DB::raw("sum(case when citizens.social_id=8 then 1 else 0 end) as social8"),
+            DB::raw("sum(case when citizens.social_id=9 then 1 else 0 end) as social9"),
+            DB::raw("sum(case when citizens.social_id=10 then 1 else 0 end) as social10"),
+            DB::raw("sum(case when citizens.social_id=11 then 1 else 0 end) as social11"),
+            DB::raw("sum(case when citizens.social_id=12 then 1 else 0 end) as social12"),
+            DB::raw("sum(case when citizens.social_id=13 then 1 else 0 end) as social13"),
+            DB::raw("sum(case when citizens.social_id=14 then 1 else 0 end) as social14"),
+            DB::raw("sum(case when citizens.social_id=15 then 1 else 0 end) as social15"),
+            DB::raw("sum(case when citizens.social_id=16 then 1 else 0 end) as social16"),
+            DB::raw("sum(case when citizens.social_id=17 then 1 else 0 end) as social17"),
+            DB::raw("sum(case when citizens.social_id=18 then 1 else 0 end) as social18"),
+        )
+            ->whereNotNull(['regions.id'])
+            ->groupBy('regions.id', 'regions.name_cyrl')
+            ->orderBy('regions.id');
+
+        $report = $report->get()->toArray();
+//        $sum = $this->getSumRegionInsurance();
+//        array_unshift($report, $sum);
+//        $all_data=['report'=>$report, 'report_user'=>$report_user];
+        return $report;
+    }
+    public function districts($id)
+    {
+        $region_id = $id;
+        $report = DB::table('citizens')
+            ->where('citizens.region_id' ,$region_id)
+//            ->leftJoin('regions', 'citizens.region_id', '=', 'regions.id')
+            ->leftJoin('districts','citizens.district_id','=','districts.id')
+            ->select(
+                'districts.name_cyrl as district_name',
+                'districts.id as district_id',
+                DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
+                DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
+                DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),
+                DB::raw("sum(case when citizens.social_id=4 then 1 else 0 end) as social4"),
+                DB::raw("sum(case when citizens.social_id=5 then 1 else 0 end) as social5"),
+                DB::raw("sum(case when citizens.social_id=6 then 1 else 0 end) as social6"),
+                DB::raw("sum(case when citizens.social_id=7 then 1 else 0 end) as social7"),
+                DB::raw("sum(case when citizens.social_id=8 then 1 else 0 end) as social8"),
+                DB::raw("sum(case when citizens.social_id=9 then 1 else 0 end) as social9"),
+                DB::raw("sum(case when citizens.social_id=10 then 1 else 0 end) as social10"),
+                DB::raw("sum(case when citizens.social_id=11 then 1 else 0 end) as social11"),
+                DB::raw("sum(case when citizens.social_id=12 then 1 else 0 end) as social12"),
+                DB::raw("sum(case when citizens.social_id=13 then 1 else 0 end) as social13"),
+                DB::raw("sum(case when citizens.social_id=14 then 1 else 0 end) as social14"),
+                DB::raw("sum(case when citizens.social_id=15 then 1 else 0 end) as social15"),
+                DB::raw("sum(case when citizens.social_id=16 then 1 else 0 end) as social16"),
+                DB::raw("sum(case when citizens.social_id=17 then 1 else 0 end) as social17"),
+                DB::raw("sum(case when citizens.social_id=18 then 1 else 0 end) as social18"),
+            )
+            ->groupBy('districts.id', 'districts.name_cyrl')
+            ->orderBy('districts.id')
+            ->get()->toArray();
+        return response()->successJson(['report' => $report]);;
     }
     public function serviceCounts()
     {

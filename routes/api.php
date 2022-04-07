@@ -44,8 +44,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('socialStatuses', 'Api\ResourceController@socialStatuses');
     });
     Route::group(['prefix' => 'report'], function () {
-        Route::get('all', 'Api\ReportController@all');
-        Route::get('districts', 'Api\ResourceController@districts');
+        Route::get('report', 'Api\ReportController@report');
+        Route::get('districts/{id}', 'Api\ReportController@districts');
         Route::get('socialStatuses', 'Api\ResourceController@socialStatuses');
     });
 });
