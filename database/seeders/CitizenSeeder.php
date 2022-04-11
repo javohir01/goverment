@@ -242,6 +242,11 @@ class CitizenSeeder extends Seeder
                 $pass_number = mt_rand(1000000,9999999);
                 $pin =  mt_rand(10000000000000,99999999999999);
                 $social = mt_rand(1,18);
+                $code = mt_rand(10000,99999);
+                $status = mt_rand(0,2);
+                $number = '00000';
+                $count = 5;
+                $number = str_replace("0", "$int", $number, $count);
                 DB::table('citizens')->insert([
                     'f_name' => $faker->firstName,
                     'l_name' => $faker->lastName,
@@ -252,11 +257,14 @@ class CitizenSeeder extends Seeder
                     'address' => $faker->address,
                     'social_id' => $social,
                     'passport' =>$letter.$pass.$pass_number,
-                    'pin' => $pin
+                    'pin' => $pin,
+                    'code' => $code,
+                    'phone_number' => $faker->numerify('+998######'),
+                    'number' => $number
                 ]);
             }
 
         }
-        DB::table('citizens')->insert($citizens);
+//        DB::table('citizens')->insert($citizens);
     }
 }

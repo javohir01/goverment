@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use phpDocumentor\Reflection\Types\Nullable;
 
 class Citizen extends Model
 {
@@ -15,7 +16,7 @@ class Citizen extends Model
     const DISTRICT = 3;
     protected $table = 'citizens';
 
-    protected $fillable = ['f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'remember_token', 'created_at', 'updated_at',];
+    protected $fillable = ['f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'number', 'phone_number', 'code', 'remember_token', 'created_at', 'updated_at',];
 
     protected $guarded = ['id'];
 
@@ -33,6 +34,8 @@ class Citizen extends Model
             'password' => 'string|nullable',
             'passport' => 'string|nullable',
             'pin' => 'integer|nullable',
+            'number' => 'nullable',
+            'phone_number' => 'required',
             'remember_token' => 'string|nullable',
             'created_at' => 'datetime|nullable',
             'updated_at' => 'datetime|nullable',

@@ -34,6 +34,14 @@ class CitizenRepository
     public function store($request)
     {
         $user = Auth::user();
+        $len = '00000';
+        $number = '0';
+
+        for ($int= 0; $int < strlen($len) - strlen($request->id) ; $int++){
+            $number .= 0;
+            return $number;
+        }
+        $number .= $request->id;
 
         $citizen = $this->model::create([
             'f_name' => $request->f_name,
@@ -46,6 +54,8 @@ class CitizenRepository
             'address' => $request->address,
             'passport' => $request->passport,
             'pin' => $request->pin,
+            'number' => $number,
+            'code' => mt_rand(1000000,9999999),
             'created_at' => Carbon::now()->format('Y-m-d'),
         ]);
 

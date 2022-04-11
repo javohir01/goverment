@@ -38,16 +38,24 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/{id}', 'Api\CitizenController@update');
         Route::delete('/{id}', 'Api\CitizenController@destroy');
     });
-    Route::group(['prefix' => 'resources'], function () {
-        Route::get('regions', 'Api\ResourceController@regions');
-        Route::get('districts', 'Api\ResourceController@districts');
-        Route::get('socialStatuses', 'Api\ResourceController@socialStatuses');
-    });
     Route::group(['prefix' => 'report'], function () {
         Route::get('report', 'Api\ReportController@report');
         Route::get('districts/{id}', 'Api\ReportController@districts');
         Route::get('socialStatuses', 'Api\ResourceController@socialStatuses');
     });
 });
+Route::group(['prefix' => 'resources'], function () {
+    Route::get('regions', 'Api\ResourceController@regions');
+    Route::get('districts', 'Api\ResourceController@districts');
+    Route::get('socialStatuses', 'Api\ResourceController@socialStatuses');
+});
 
+Route::group(['prefix' => 'applications'], function () {
+    Route::get('/', 'Api\ApplicationController@index');
+    Route::post('/store', 'Api\ApplicationController@store');
+    Route::get('/{id}', 'Api\ApplicationController@show');
+    Route::delete('/{id}', 'Api\ApplicationController@destroy');
+    Route::post('/send-sms', 'Api\SmsController@sendSms');
+    Route::post('/confirm-sms', 'Api\SmsController@confirmSms');
+});
 

@@ -26,7 +26,7 @@ class CreateCitizensTable extends Migration
             $table->integer('region_id')->nullable();
             $table->integer('district_id')->nullable();
             $table->integer('social_id');
-            $table->integer('number');
+            $table->string('number');
             $table->bigInteger('phone_number');
             $table->text('code');
             $table->string('address');
