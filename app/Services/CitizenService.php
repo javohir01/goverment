@@ -6,53 +6,28 @@ use App\Models\Citizen;
 use App\Models\Region;
 use App\Models\Role;
 use App\Repositories\CitizenRepository;
+use App\Repositories\ResourceRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CitizenService
 {
+    private $resourceRepo;
 
-    /**
-     * @var CitizenRepository
-     */
     private $repository;
 
     public function __construct()
     {
         $this->repository = new CitizenRepository();
+        $this->resourceRepo = new ResourceRepository;
+
     }
 
     public function guard()
     {
         return Auth::guard();
     }
-
-//    public function getAll(Request $request)
-//    {
-//        $user = $this->guard()->user();
-//        $query = Citizen::query();
-//
-//        if ($user->role_id == Citizen::REGION){
-//            $query->where(['region_id' => $user->region_id]);
-//        }
-//        if ($user->role_id == Citizen::DISTRICT){
-//            $query->where(['district_id' => $user->district_id]);
-////                ->with('region:id,name_cyrl')
-////                ->with('district')
-////                ->get();
-//        }
-////
-//        return [
-//            'current_page' => $request->page ?? 1,
-//            'per_page' => $request->limit,
-//            'data' => $query
-//                ->with('region:id,name_cyrl')
-//                ->with('district')
-//                ->get(),
-//            'total' => $query->count() < $request->limit ? $citizens->count() : -1
-//        ];
-//    }
 
     public function getAll(Request $request)
     {
@@ -63,10 +38,10 @@ class CitizenService
             ->with('socialStatus');
 
 
-        if ($user->role_id == Citizen::REGION){
+        if ($user->role_id == Citizen::REGION_GOVERNMENT){
             $query->where(['region_id' => $user->region_id]);
         }
-        if ($user->role_id == Citizen::DISTRICT){
+        if ($user->role_id == Citizen::DISTRICT_GOVERNMENT){
             $query->where(['district_id' => $user->district_id]);
         }
 
@@ -109,39 +84,90 @@ class CitizenService
 
 
     }
-//    public function store($request)
-//    {
-//        $user = Auth::user();
-//        $validator = $this->repository->toValidate($request->all());
-//        $msg = "";
-//        $citizen = $this->repository->store($request);
-//        return response()->successJson(['citizen' => $citizen]);
-//
-////        if (!$validator->fails()){
-////            if ($user->role_id == Citizen::ADMIN){
-////                return response()->errorJson('Рухсат мавжуд емас', 101);
-////            }
-////            if ($user->role_id == Citizen::REGION){
-////                return response()->errorJson('Рухсат мавжуд емас', 101);
-////            }
-////            if ($user->role_id == Citizen::DISTRICT){
-////                if ($request->city_id != $user->city_id){
-////                    return response()->errorJson('Рухсат мавжуд емас', 101);
-////                }
-////                $citizen = $this->repository->store($request);
-////                return response()->successJson(['citizen' => $citizen]);
-////            }
-////        }
-////        else{
-////            $errors = $validator->failed();
-////            if(empty($errors)) {
-////                $msg = "Соҳалар нотўғри киритилди";
-////            }
-////            return response()->errorJson($msg, 400, $errors);
-////        }
-//
-//    }
+    public function passport($request)
+    {
+        $type = \request('type', 'young');
+        $user = $this->repository->guard()->user();
+        $passports = ['AA0215962'];
 
+        if(($user->id == 262) && !in_array($request->passport, $passports)) {
+            return ['msg' => 'Маълумот топилмади', 'status' => 404];
+        }
+        $result = [];
+        if($request->birth_date){
+            $data = $this->resourceRepo->getMvdPassportData($request->passport, $request->birth_date);
+            if (!isset($data['result']['pPinpp'])) {
+                $error = isset($data['error']) ? $data['error'] : [];
+                return ['msg' => 'Маълумот топилмади', 'status' => 404];
+            } else {
+                $result = ['citizen' => $data['result']];
+            }
+        } else {
+            $data = $this->resourceRepo->getPassportData($request->passport);
+            if (isset($data['result'])) {
+
+                $tin = $data['result']['tin'] ?? null;
+
+                if (isset($tin)) {
+                    $data['result']['tin'] = $tin;
+
+                    $pin = $this->resourceRepo->getPin($tin);
+
+                    if (!is_null($pin)) {
+                        $data['result']['pin'] = $pin;
+                        $result = ['citizen' => $data['result']];
+                    } else {
+                        return ['msg' => 'Pin not found', 'status' => 404];
+                    }
+                } else {
+                    return ['msg' => 'Tin not found', 'status' => 404];
+                }
+
+            } else {
+                $error = isset($data['error']) ? $data['error'] : [];
+                return ['msg' => 'Маълумот топилмади', 'status' => 404, 'error' => $error];
+            }
+        }
+
+        if(isset($data['result']) && !empty($data['result'])) {
+
+            $birth_year = $data['result']['date_birth'] ?? $data['result']['pDateBirth'];
+            $birth_year = (int) explode('.', $birth_year)[2];
+            $current = (int) date('Y');
+            $age = (int) $current - $birth_year;
+
+            $check = $this->repository->getQuery()->where('passport', $request->passport)->first();
+
+            if($check) {
+                return ['msg' => 'Ушбу фуқаро аввал рўйхатга олинган!', 'status' => 409, 'code' => 'db'];
+            }
+
+            if($type && $type == 'woman') {
+                $gender = $data['result']['gender'] ?? $data['result']['pSex'];
+                if($gender == 1) {
+                    return ['msg' => 'Фуқаро жинси эркак бўлганлиги сабабли, аёллар дафтарига киритиб бўлмайди!', 'status' => 409, 'code' => 'db'];
+                }
+
+                if($age < 18) {
+                    return ['msg' => 'Фуқаро 18 ёшдан кичик бўлганлиги сабабли, аёллар дафтарига киритиб бўлмайди!', 'status' => 409, 'code' => 'db'];
+                }
+
+                if($age > 55) {
+                    return ['msg' => 'Фуқаро 55 ёшдан катта бўлганлиги сабабли, аёллар дафтарига киритиб бўлмайди!', 'status' => 409, 'code' => 'db'];
+                }
+            }
+
+            if($type && $type == 'young') {
+                if($birth_year) {
+
+                    if($age > 30) {
+                        return ['msg' => 'Фуқаро 30 ёшдан катта бўлганлиги сабабли, ёшлар дафтарига киритиб бўлмайди!', 'status' => 409, 'code' => 'db'];
+                    }
+                }
+            }
+            return ['status' => 200, 'citizen' => $result];
+        }
+    }
     public function store($request)
     {
 

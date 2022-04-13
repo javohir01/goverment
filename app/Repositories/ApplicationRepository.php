@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Application;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ApplicationRepository
@@ -59,10 +60,15 @@ class ApplicationRepository
             'passport' => $request->passport,
             'pin' => $request->pin,
             'status' => 0,
-            'number' => $this->getNumber($request),
-            'code' => mt_rand(1000000,9999999),
+            'number' => '0',
+            'code' => mt_rand(10000,99999),
             'created_at' => Carbon::now()->format('Y-m-d')
         ]);
+//        dd($Application);
+        $Application->update([
+            'number' => str_pad($Application->id,6,"0",STR_PAD_LEFT),
+        ]);
+
 
         $data['Application']=$Application;
 //        dd($data);
@@ -132,5 +138,49 @@ class ApplicationRepository
 
         $Application = $Application->first();
         return $Application ? true : false;
+    }
+    public function rejected($request)
+    {
+        $Application  = Application::find($request->id);
+        return $Application->update([
+            'status' => 3,
+            'updated_at' => Now(),
+        ]);
+
+        $data['Application'] = $Application;
+        return $data;
+    }
+
+    public function confirmed($request)
+    {
+        $Application  = Application::find($request->id);
+        return $Application->update([
+            'status' => 2,
+            'updated_at' => Now(),
+        ]);
+
+        $data['Application'] = $Application;
+        return $data;
+    }
+
+    public function check($request)
+    {
+        $Application  = Application::find($request->id);
+//        return $Application->update([
+//            'status' => 2,
+//            'updated_at' => Now(),
+//        ]);
+        $application = DB::table('applications')->where('applications.number' ,$request->number)->get();
+
+//        $Application = Application::where([
+//            ['number', $request->number]
+//        ]);
+//        dd($application);
+
+        $application->where('code', '!=', $request->code);
+
+
+        $application = $application->first();
+        return $application ? true : false;
     }
 }

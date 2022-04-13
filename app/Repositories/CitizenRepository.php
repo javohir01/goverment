@@ -54,11 +54,13 @@ class CitizenRepository
             'address' => $request->address,
             'passport' => $request->passport,
             'pin' => $request->pin,
-            'number' => $number,
-            'code' => mt_rand(1000000,9999999),
+            'number' => '0',
+            'code' => mt_rand(10000,99999),
             'created_at' => Carbon::now()->format('Y-m-d'),
         ]);
-
+        $citizen->update([
+            'number' => str_pad($citizen->id,6,"0",STR_PAD_LEFT),
+        ]);
         $data['citizen']=$citizen;
         return $data;
     }

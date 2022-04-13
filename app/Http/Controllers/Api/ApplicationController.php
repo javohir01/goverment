@@ -9,6 +9,7 @@ use App\Repositories\CitizenRepository;
 use App\Services\ApplicationService;
 use App\Services\CitizenService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ApplicationController extends Controller
 {
@@ -25,6 +26,8 @@ class ApplicationController extends Controller
 
     public function index(Request $request)
     {
+//        $user = Auth::user();
+//        return $user;
         $applications = $this->service->getAll($request);
 
         return response()->successJson(['applications' => $applications]);
@@ -49,23 +52,26 @@ class ApplicationController extends Controller
         ];
         return response()->json($this->response);
     }
-    public function update(Request $request, $id)
-    {
-        $result = $this->service->update($request, $id);
 
-        return response()->successJson($result['application']);
+    public function rejected(Request $request)
+    {
+        $result = $this->service->rejected($request);
+
+        return response()->successJson($result);
     }
 
-    public function destroy($id)
+    public function confirmed(Request $request)
     {
-        $citizen = $this->repo->getById($id);
-        if ($citizen) {
-            $citizen->delete();
-            $this->response['success'] = true;
-        } else {
-            $this->response['success'] = false;
-            $this->response['error'] = "Citizen not found";
-        }
-        return response()->json($this->response);
+        $result = $this->service->confirmed($request);
+        return response()->successJson($result);
     }
+    public function getNumber(Request $request){
+        dd($request->all());
+    }
+    public function check(Request $request)
+    {
+        $result = $this->service->check($request);
+        return response()->successJson($result);
+    }
+
 }

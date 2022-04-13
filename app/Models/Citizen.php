@@ -9,11 +9,9 @@ use phpDocumentor\Reflection\Types\Nullable;
 
 class Citizen extends Model
 {
-    use HasFactory;
-
     const ADMIN = 1;
-    const REGION = 2;
-    const DISTRICT = 3;
+    const REGION_GOVERNMENT = 2;
+    const DISTRICT_GOVERNMENT = 3;
     protected $table = 'citizens';
 
     protected $fillable = ['f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'number', 'phone_number', 'code', 'remember_token', 'created_at', 'updated_at',];

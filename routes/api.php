@@ -37,6 +37,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/{id}', 'Api\CitizenController@show');
         Route::put('/{id}', 'Api\CitizenController@update');
         Route::delete('/{id}', 'Api\CitizenController@destroy');
+        Route::post('/passport', 'Api\CitizenController@passport');
     });
     Route::group(['prefix' => 'report'], function () {
         Route::get('report', 'Api\ReportController@report');
@@ -53,9 +54,14 @@ Route::group(['prefix' => 'resources'], function () {
 Route::group(['prefix' => 'applications'], function () {
     Route::get('/', 'Api\ApplicationController@index');
     Route::post('/store', 'Api\ApplicationController@store');
+    Route::put('/rejected/{id}', 'Api\ApplicationController@rejected');
+    Route::put('/confirmed/{id}', 'Api\ApplicationController@confirmed');
     Route::get('/{id}', 'Api\ApplicationController@show');
     Route::delete('/{id}', 'Api\ApplicationController@destroy');
     Route::post('/send-sms', 'Api\SmsController@sendSms');
     Route::post('/confirm-sms', 'Api\SmsController@confirmSms');
+    Route::post('/get-number', 'Api\ApplicationController@getNumber');
+    Route::post('/check', 'Api\ApplicationController@check');
+
 });
 

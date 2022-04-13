@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Application extends Model
 {
+    const ADMIN = 1;
+    const REGION_GOVERNMENT = 2;
+    const DISTRICT_GOVERNMENT = 3;
     const NEW = 1;
     const CONFIRMED = 2;
     const REJECTED = 3;

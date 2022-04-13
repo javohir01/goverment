@@ -64,14 +64,18 @@ class ApplicationService
             ->with('district')
             ->with('socialStatus');
 
-
-        if ($user->role_id == Citizen::REGION) {
+//        dd($query->get());
+//        return $user->role_id;
+        if ($user->role_id === Application::REGION_GOVERNMENT) {
             $query->where(['region_id' => $user->region_id]);
         }
-        if ($user->role_id == Citizen::DISTRICT) {
+        if ($user->role_id === Application::DISTRICT_GOVERNMENT) {
             $query->where(['district_id' => $user->district_id]);
         }
 
+        if (!empty($request->all()['status'])) {
+            $query->where(['status' => $request->all()['status']]);
+        }
         if (!empty($request->all()['region_id'])) {
             $query->where(['region_id' => $request->all()['region_id']]);
         }
@@ -94,13 +98,12 @@ class ApplicationService
             $query->where('Applications.passport', 'like', '%' . $request->all()['passport'] . '%');
         }
 
-        $query->paginate($request->limit)->toArray();
+//        $query->paginate($request->limit)->toArray();
 //        if($request->has('getAll')){
 //            $query = $query->paginate($query->count());
 //        } else {
 //            $query = $query->paginate($request->get('limit', 30));
 //        }
-
         return [
             'current_page' => $request->page ?? 1,
             'per_page' => $request->limit,
@@ -115,7 +118,6 @@ class ApplicationService
 
         $validator = $this->repo->toValidate($request->all());
         $msg = "";
-//dd($request->all());
 //        $Application = $this->repo->store($request);
 //        return response()->successJson(['Application' => $Application]);
 
@@ -153,32 +155,44 @@ class ApplicationService
         return $query->first();
     }
 
-    public function update($request, $id){
-//        $msg = "";
-//        $validator = $this->repo->toValidate($request->all());
-//
-//        $Application = $this->repo->update($request, $id);
-//        return ['status' => 200, 'Application' => $Application];
-//        $Application = DB::table('Applications')->where(['id' => $id])->first();
-
+    public function update($request, $id)
+    {
         $msg = "";
         $validator = $this->repo->toValidate($request->all());
 
         if (!$validator->fails()) {
 
-            if(!$this->repo->checkApplication($request->passport, $id)) {
+            if (!$this->repo->checkApplication($request->passport, $id)) {
                 $Application = $this->repo->update($request, $id);
-                return  ['status' => 200, 'Application' => $Application];
+                return ['status' => 200, 'Application' => $Application];
             } else {
                 return ['msg' => 'Bu ma\'lumotlar bazada mavjud', 'status' => 409];
             }
         } else {
             $errors = $validator->failed();
-            if(empty($errors)) {
+            if (empty($errors)) {
                 $msg = "Соҳалар нотўғри киритилди";
             }
             return ['msg' => $msg, 'status' => 422, 'error' => $errors];
         }
+    }
+
+    public function rejected($request)
+    {
+        $application = $this->repo->rejected($request);
+        return ['status' => 200, 'application' => $application];
+    }
+
+    public function confirmed($request)
+    {
+        $application = $this->repo->confirmed($request);
+        return ['status' => 200, 'application' => $application];
+    }
+
+    public function check($request)
+    {
+        $application = $this->repo->check($request);
+        return ['status' => 200, 'application' => $application];
     }
 
 }

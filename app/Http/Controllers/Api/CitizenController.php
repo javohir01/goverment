@@ -75,4 +75,16 @@ class CitizenController extends Controller
         return response()->json($this->response);
     }
 
+    public function passport(Request $request)
+    {
+        $result = $this->service->passport($request);
+        if($result['status'] == 404) {
+            return response()->errorJson($result['msg'], 200);
+        }
+        if($result['status'] == 409) {
+            return response()->errorJson($result['msg'], 200, [], [], $result['code']);
+        }
+        return response()->successJson($result['citizen']);
+    }
+
 }
