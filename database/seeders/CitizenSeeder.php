@@ -260,7 +260,7 @@ class CitizenSeeder extends Seeder
                     'pin' => $pin,
                     'code' => $code,
                     'phone_number' => $faker->numerify('+998######'),
-                    'number' => $number
+                    'number' => str_pad($int+1,6,"0",STR_PAD_LEFT)
                 ]);
             }
 

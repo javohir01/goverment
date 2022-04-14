@@ -73,5 +73,16 @@ class ApplicationController extends Controller
         $result = $this->service->check($request);
         return response()->successJson($result);
     }
+    public function getPassport(Request $request)
+    {
+        $result = $this->service->idCard($request);
+        if($result['status'] == 404) {
+            return response()->errorJson($result['msg'], 200);
+        }
+        if($result['status'] == 409 || !isset($result['citizen'])) {
+            return response()->errorJson($result['msg'], 200, [], [], $result['code']);
+        }
+        return response()->successJson($result['citizen']);
+    }
 
 }

@@ -7,6 +7,7 @@ use App\Models\Citizen;
 use App\Models\Region;
 use App\Models\Role;
 use App\Repositories\ApplicationRepository;
+use App\Repositories\ResourceRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,9 +21,13 @@ class ApplicationService
     ];
 
     private $repo;
+    private $resourceRepo;
+
     public function __construct()
     {
         $this->repo = new ApplicationRepository();
+        $this->resourceRepo = new ResourceRepository;
+
     }
 
     public function guard()
@@ -194,5 +199,26 @@ class ApplicationService
         $application = $this->repo->check($request);
         return ['status' => 200, 'application' => $application];
     }
+    public function idCard($request)
+    {
+//        dd($request->all());
+        $data = $this->resourceRepo->getIpsPersonData($request->passport, $request->pin);
+//        dd($data);
+        if (!isset($data['result'])) return ['msg' => 'Маълумот топилмади', 'status' => 404, 'error' => []];
+        else {
 
+            $pin = $request->pin;
+            $birth_year = $data['result']['birth_date'];
+
+            $result = ['citizen' => [
+                'pin' => $pin,
+                'l_name' => $data['result']['surname_latin'],
+                "f_name" => $data['result']['name_latin'],
+                "m_name" => $data['result']['patronym_latin'],
+                "birth_date" => date('d.m.Y', strtotime($birth_year)),
+            ]];
+//            dd($result['citizen']);
+            return ['status' => 200, 'citizen' => $result];
+        }
+    }
 }

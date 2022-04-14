@@ -21,7 +21,7 @@ class ResourceRepository
     const RESOURCE_URL_MVD_OLD = 'http://resource.mehnat.uz/services';
     const GNK_API = 'https://gnk-api.mehnat.uz/api/v1/company/getCompanyByTin';
     const RELATIVES_URL = 'http://relatives-api.argos.local/api/relatives/index/';
-
+//    const RESOURCE_URL = 'https://resource1.mehnat.uz/services';
     public function getTin($passport)
     {
         $data_by_passport = [
@@ -75,7 +75,7 @@ class ResourceRepository
             'params' => ['passport' => $passport]
         ];
         $client = new Client(['verify' => false]);
-        $response_by_passport = $client->post(self::RESOURCE_URL, [
+        $response_by_passport = $client->post(self::RESOURCE_URL_MVD, [
             'json' => $data_by_passport
         ]);
         $citizen_by_passport = json_decode((string)$response_by_passport->getBody(), true);
@@ -141,7 +141,7 @@ class ResourceRepository
             ]
         ];
         $client = new Client(['verify' => false]);
-        $response_by_passport = $client->post(self::RESOURCE_URL, [
+        $response_by_passport = $client->post(self::RESOURCE_URL_MVD, [
             'json' => $data_by_pin
         ]);
         $result = json_decode((string)$response_by_passport->getBody(), true);
@@ -210,7 +210,8 @@ class ResourceRepository
 
     public function getIpsPersonData($passport, $pin)
     {
-        $client = new Client(['verify' => false]);
+//        dd($passport, $pin);
+        $client = new Client();
         $data = [
             'version' => '1.0',
             'id' => 7436,
@@ -220,11 +221,12 @@ class ResourceRepository
                 'pin' => $pin
             ]
         ];
+//        dd($data);
         try {
-        $response = $client->post(self::RESOURCE_URL, [
+        $response = $client->post(self::RESOURCE_URL_MVD, [
             'json' => $data
         ]);
-
+//        dd($response);
         return json_decode((string)$response->getBody(), true);
         } catch (RequestException   $e) {
             return null;
@@ -726,5 +728,29 @@ class ResourceRepository
             ];
         }
         return $result;
+    }
+
+    public function getPassport($passport, $tin){
+        $client = new Client(['verify' => false]);
+        $data = [
+            'version' => '1.0',
+            'id' => 7436,
+            'method' => 'ips.person',
+            'params' => [
+                'passport' => $passport,
+                'pin' => $tin
+            ]
+        ];
+        try {
+            $response = $client->post(self::RESOURCE_URL, [
+                'json' => $data
+            ]);
+
+            return json_decode((string)$response->getBody(), true);
+        } catch (RequestException   $e) {
+            return null;
+        } catch (ConnectException    $e) {
+            return null;
+        }
     }
 }

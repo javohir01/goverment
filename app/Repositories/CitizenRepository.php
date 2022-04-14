@@ -34,15 +34,7 @@ class CitizenRepository
     public function store($request)
     {
         $user = Auth::user();
-        $len = '00000';
-        $number = '0';
-
-        for ($int= 0; $int < strlen($len) - strlen($request->id) ; $int++){
-            $number .= 0;
-            return $number;
-        }
-        $number .= $request->id;
-
+//    dd($request);
         $citizen = $this->model::create([
             'f_name' => $request->f_name,
             'l_name' => $request->l_name,
@@ -53,6 +45,7 @@ class CitizenRepository
             'social_id' => $request->social_id,
             'address' => $request->address,
             'passport' => $request->passport,
+            'phone_number' => $request->phone_number,
             'pin' => $request->pin,
             'number' => '0',
             'code' => mt_rand(10000,99999),
@@ -61,6 +54,9 @@ class CitizenRepository
         $citizen->update([
             'number' => str_pad($citizen->id,6,"0",STR_PAD_LEFT),
         ]);
+
+//        dd($citizen);
+
         $data['citizen']=$citizen;
         return $data;
     }
@@ -105,6 +101,7 @@ class CitizenRepository
             'social_id' => 'required',
             'address' => 'required',
             'passport' => 'required',
+            'phone_number' => 'required',
             'pin' => 'required',
             'remember_token' => 'nullable',
             'created_at' => 'nullable',

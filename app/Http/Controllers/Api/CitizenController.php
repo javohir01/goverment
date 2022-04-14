@@ -34,6 +34,7 @@ class CitizenController extends Controller
 
     public function store(Request $request)
     {
+//        dd($request);
         return $this->service->store($request);
     }
 
@@ -82,6 +83,17 @@ class CitizenController extends Controller
             return response()->errorJson($result['msg'], 200);
         }
         if($result['status'] == 409) {
+            return response()->errorJson($result['msg'], 200, [], [], $result['code']);
+        }
+        return response()->successJson($result['citizen']);
+    }
+    public function getPassport(Request $request)
+    {
+        $result = $this->service->idCard($request);
+        if($result['status'] == 404) {
+            return response()->errorJson($result['msg'], 200);
+        }
+        if($result['status'] == 409 || !isset($result['citizen'])) {
             return response()->errorJson($result['msg'], 200, [], [], $result['code']);
         }
         return response()->successJson($result['citizen']);
