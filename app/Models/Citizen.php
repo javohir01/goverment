@@ -14,32 +14,9 @@ class Citizen extends Model
     const DISTRICT_GOVERNMENT = 3;
     protected $table = 'citizens';
 
-    protected $fillable = ['f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'number', 'phone_number', 'code', 'remember_token', 'created_at', 'updated_at',];
+    protected $fillable = ['f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'number', 'phone_number', 'code', 'application_id', 'remember_token', 'created_at', 'updated_at',];
 
     protected $guarded = ['id'];
-
-    public static function rules()
-    {
-        return [
-            'f_name' => 'string|nullable',
-            'l_name' => 'string|nullable',
-            'm_name' => 'string|nullable',
-            'birth_date' => 'integer|nullable',
-            'region_id' => 'integer|nullable',
-            'district_id' => 'integer|nullable',
-            'social_id' => 'integer|nullable',
-            'address' => 'string|nullable',
-            'password' => 'string|nullable',
-            'passport' => 'string|nullable',
-            'pin' => 'integer|nullable',
-            'number' => 'nullable',
-            'phone_number' => 'required',
-            'remember_token' => 'string|nullable',
-            'created_at' => 'datetime|nullable',
-            'updated_at' => 'datetime|nullable',
-
-        ];
-    }
 
     public function region()
     {

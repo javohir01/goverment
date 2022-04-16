@@ -235,8 +235,8 @@ class CitizenSeeder extends Seeder
 
         foreach ($districts as $district)
         {
-            $number = mt_rand(50,100);
-            for ($int= 0; $int < $number; $int++){
+            $number1 = mt_rand(50,100);
+            for ($int= 0; $int < $number1; $int++){
                 $letter = chr(rand(65,90));
                 $pass = chr(rand(65,90));
                 $pass_number = mt_rand(1000000,9999999);

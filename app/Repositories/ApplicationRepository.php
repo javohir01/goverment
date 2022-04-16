@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Application;
+use App\Models\Citizen;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -143,7 +144,7 @@ class ApplicationRepository
     {
         $Application  = Application::find($request->id);
         return $Application->update([
-            'status' => 3,
+            'status' => 2,
             'updated_at' => Now(),
         ]);
 
@@ -154,12 +155,35 @@ class ApplicationRepository
     public function confirmed($request)
     {
         $Application  = Application::find($request->id);
-        return $Application->update([
-            'status' => 2,
-            'updated_at' => Now(),
+
+        $citizen = Citizen::create([
+            'f_name' => $Application->f_name,
+            'l_name' => $Application->l_name,
+            'm_name' => $Application->m_name,
+            'birth_date' => $Application->birth_date,
+            'phone_number' => $Application->phone_number,
+            'region_id' => $Application->region_id,
+            'district_id' => $Application->district_id,
+            'social_id' => $Application->social_id,
+            'address' => $Application->address,
+            'passport' => $Application->passport,
+            'pin' => $Application->pin,
+            'number' => str_pad($Application->id,6,"0",STR_PAD_LEFT),
+            'application_id' => $request->id,
+            'code' => mt_rand(10000,99999),
+            'created_at' => Carbon::now()->format('Y-m-d')
         ]);
 
-        $data['Application'] = $Application;
+        $Application->update([
+            'status' => 1,
+            'updated_at' => Now(),
+        ]);
+//        dd($citizen);
+
+        $data = [
+            'Application' => $Application,
+            'citizen' => $citizen,
+        ];
         return $data;
     }
 

@@ -15,30 +15,9 @@ class Application extends Model
     const REJECTED = 3;
     protected $table = 'applications';
 
-    protected $fillable = ['id', 'status', 'number', 'phone_number', 'code', 'f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'remember_token', 'created_at', 'updated_at',];
+    protected $fillable = ['id','deny_reason_id', 'status', 'number', 'phone_number', 'code', 'f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'remember_token', 'created_at', 'updated_at',];
 
     protected $guarded = ['id'];
-
-    public static function rules()
-    {
-        return [
-            'f_name' => 'string|nullable',
-            'l_name' => 'string|nullable',
-            'm_name' => 'string|nullable',
-            'birth_date' => 'integer|nullable',
-            'region_id' => 'integer|nullable',
-            'district_id' => 'integer|nullable',
-            'social_id' => 'integer|nullable',
-            'address' => 'string|nullable',
-            'password' => 'string|nullable',
-            'passport' => 'string|nullable',
-            'pin' => 'integer|nullable',
-            'remember_token' => 'string|nullable',
-            'created_at' => 'datetime|nullable',
-            'updated_at' => 'datetime|nullable',
-
-        ];
-    }
 
     public function region()
     {
@@ -52,6 +31,14 @@ class Application extends Model
     public function socialStatus()
     {
         return $this->belongsTo('App\Models\SocialStatus', 'social_id');
+    }
+    public function status()
+    {
+        return $this->belongsTo('App\Models\Status', 'status');
+    }
+    public function denyReason()
+    {
+        return $this->belongsTo('App\Models\DenyReason', 'deny_reason_id');
     }
 
     public function getBirthDateAttribute(){

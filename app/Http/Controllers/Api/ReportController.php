@@ -25,13 +25,17 @@ class ReportController extends Controller
     public function report(Request $request)
     {
         if (!empty($request->all())){
+//            dd($request->all());
             $region_id = $request->all();
+            $count = "citizens.district_id=  BETWEEN 16 AND 30";
+
             $report = DB::table('citizens')
 //                ->where('citizens.region_id' ,$region_id)
                 ->leftJoin('districts','citizens.district_id','=','district.id')
                 ->select(
                     'districts.name_cyrl as region_name',
                     'districts.id as region_id',
+                    DB::raw("sum(case when citizens.district_id=district.id then 1 else 0 end) as socials"),
                     DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
                     DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
                     DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),
@@ -61,6 +65,7 @@ class ReportController extends Controller
                 ->select(
                     'regions.name_cyrl as region_name',
                     'regions.id as region_id',
+                    DB::raw("sum(case when citizens.region_id is not null then 1 else 0 end) as socials"),
                     DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
                     DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
                     DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),

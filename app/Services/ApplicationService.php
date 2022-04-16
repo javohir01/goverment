@@ -190,8 +190,8 @@ class ApplicationService
 
     public function confirmed($request)
     {
-        $application = $this->repo->confirmed($request);
-        return ['status' => 200, 'application' => $application];
+        $data = $this->repo->confirmed($request);
+        return ['status' => 200, 'data' => $data];
     }
 
     public function check($request)
@@ -202,23 +202,30 @@ class ApplicationService
     public function idCard($request)
     {
 //        dd($request->all());
+
         $data = $this->resourceRepo->getIpsPersonData($request->passport, $request->pin);
 //        dd($data);
         if (!isset($data['result'])) return ['msg' => 'Маълумот топилмади', 'status' => 404, 'error' => []];
         else {
-
             $pin = $request->pin;
             $birth_year = $data['result']['birth_date'];
-
-            $result = ['citizen' => [
-                'pin' => $pin,
-                'l_name' => $data['result']['surname_latin'],
-                "f_name" => $data['result']['name_latin'],
-                "m_name" => $data['result']['patronym_latin'],
-                "birth_date" => date('d.m.Y', strtotime($birth_year)),
-            ]];
+            $query = Application::query()->where(['pin' => $pin]);
+            $application = $query->get();
+            if(count($application) === 0){
+                $result = ['citizen' => [
+                    'pin' => $pin,
+                    'l_name' => $data['result']['surname_latin'],
+                    "f_name" => $data['result']['name_latin'],
+                    "m_name" => $data['result']['patronym_latin'],
+                    "birth_date" => date('d.m.Y', strtotime($birth_year)),
+                ]];
+                $application = $query->get();
 //            dd($result['citizen']);
-            return ['status' => 200, 'citizen' => $result];
+                return ['status' => 200, 'citizen' => $result];
+            } else {
+                return ['msg' => 'Bu ma\'lumotlar bazada mavjud', 'status' => 409, 'application' => $application];
+            }
+
         }
     }
 }

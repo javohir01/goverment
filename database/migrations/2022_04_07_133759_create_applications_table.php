@@ -32,6 +32,8 @@ class CreateApplicationsTable extends Migration
             $table->bigInteger('phone_number');
             $table->text('code');
             $table->string('address');
+            $table->integer('deny_reason_id')->nullable();
+
             $table->timestamps();
         });
     }

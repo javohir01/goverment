@@ -80,7 +80,7 @@ class ApplicationController extends Controller
             return response()->errorJson($result['msg'], 200);
         }
         if($result['status'] == 409 || !isset($result['citizen'])) {
-            return response()->errorJson($result['msg'], 200, [], [], $result['code']);
+            return response()->errorJson($result['msg'], 200, [], $result['application']);
         }
         return response()->successJson($result['citizen']);
     }

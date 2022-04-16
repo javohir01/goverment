@@ -28,10 +28,8 @@ class SmsService
         if(!isset($attributes['phone_number'])) {
             return ['msg' => 'phone is required', 'status' => 422];
         }
-//        Log::info('attributes_phone', [$attributes['phone']]);
 
         $code = rand(11111, 99999);
-//        dd($code, $attributes);
         PhoneCode::updateOrCreate(['phone_number' => $attributes['phone_number']],['code' => $code]);
         $message = 'Yoshlar daftari (yoshlardaftari.uz) axborot tizimi uchun kod: '.$code .'. Yangiliklardan xabardor bo\'lish uchun telegram kanalimizga obuna bo\'ling: https://t.me/yoshlaragentligi';
         $this->send($attributes['phone_number'], $message);
