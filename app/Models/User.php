@@ -55,16 +55,20 @@ class User extends Authenticatable implements JWTSubject
     }
     public function isAdmin()
     {
-        return $this->roles()->first()->name == 'operator';
+        return $this->roles()->first()->name == 'admin';
     }
-
+    public function isAdmin()
+    {
+        return $this->roles()->first()->name == 'admin';
+    }
     public function isRegion()
     {
-        return $this->roles()->where('name', 'reg_gov')->exists();
+        return $this->roles()->where('id', '2')->exists();
     }
 
     public function isDistrict()
     {
-        return $this->roles()->where('name', 'dist_gov')->exists();
+        return $this->roles()->where('id', '3')->exists();
     }
+
 }

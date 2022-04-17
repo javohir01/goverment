@@ -243,10 +243,10 @@ class CitizenSeeder extends Seeder
                 $pin =  mt_rand(10000000000000,99999999999999);
                 $social = mt_rand(1,18);
                 $code = mt_rand(10000,99999);
-                $status = mt_rand(0,2);
-                $number = '00000';
-                $count = 5;
-                $number = str_replace("0", "$int", $number, $count);
+//                $application_id = mt_rand(0,);
+//                $number = '00000';
+//                $count = 5;
+//                $number = str_replace("0", "$int", $number, $count);
                 DB::table('citizens')->insert([
                     'f_name' => $faker->firstName,
                     'l_name' => $faker->lastName,

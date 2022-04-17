@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Region\IndexRequest as RegionRequest;
 use App\Http\Requests\District\IndexRequest as DistrictRequest;
+use App\Models\DenyReason;
 use App\Models\District;
 use App\Models\Region;
 use App\Models\SocialStatus;
@@ -54,9 +55,16 @@ class ResourceController extends Controller
         $districts = $districts->get();
         return response()->successJson(['districts' => $districts]);
     }
+
     public function socialStatuses(Request $request)
     {
         $social_statuses = SocialStatus::all();
         return response()->successJson(['social_statuses' => $social_statuses]);
+    }
+
+    public function denyReasons(Request $request)
+    {
+        $deny_reasons = DenyReason::all();
+        return response()->successJson(['deny_reasons' => $deny_reasons]);
     }
 }

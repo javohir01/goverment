@@ -143,11 +143,14 @@ class ApplicationRepository
     public function rejected($request)
     {
         $Application  = Application::find($request->id);
-        return $Application->update([
+        $Application->update([
+            'deny_reason_id' => $request->deny_reason_id,
+            'deny_reason_comment' => $request->deny_reason_comment,
             'status' => 2,
             'updated_at' => Now(),
         ]);
 
+//        dd($Application);
         $data['Application'] = $Application;
         return $data;
     }

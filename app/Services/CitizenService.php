@@ -39,7 +39,7 @@ class CitizenService
             ->with('socialStatus');
 
 
-        if ($user->role_id == Citizen::REGION_GOVERNMENT){
+        if ($user->role == Citizen::REGION_GOVERNMENT){
             $query->where(['region_id' => $user->region_id]);
         }
         if ($user->role_id == Citizen::DISTRICT_GOVERNMENT){
@@ -68,19 +68,20 @@ class CitizenService
             $query->where('citizens.passport', 'like', '%'. $request->all()['passport'].'%');
         }
 
-        $query->paginate($request->limit)->toArray();
+//        $query->paginate($request->limit)->toArray();
 //        if($request->has('getAll')){
 //            $query = $query->paginate($query->count());
 //        } else {
 //            $query = $query->paginate($request->get('limit', 30));
 //        }
-
         return [
             'current_page' => $request->page ?? 1,
             'per_page' => $request->limit,
-            'data' =>$query->get(),
-            'total' => $query->count() < $request->limit ? $query->count() : -1,
+            'data' => $citizens,
+            'total' => $citizens->count() < $request->limit ? $citizens->count() : -1
         ];
+
+//
 
 
 

@@ -67,7 +67,8 @@ class ApplicationService
         $query = Application::query()
             ->with('region:id,name_cyrl')
             ->with('district')
-            ->with('socialStatus');
+            ->with('socialStatus')
+            ->with('denyReason');
 
 //        dd($query->get());
 //        return $user->role_id;

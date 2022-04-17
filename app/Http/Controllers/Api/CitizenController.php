@@ -23,12 +23,6 @@ class CitizenController extends Controller
     {
         $citizens = $this->service->getAll($request);
 
-//        $citizens = Citizen::query()->get();
-//        if($request->has('getAll')){
-//            $citizens = $citizens->paginate($citizens->count());
-//        } else {
-//            $citizens = $citizens->paginate($request->get('limit', 30));
-//        }
         return response()->successJson(['citizens' => $citizens]);
     }
 

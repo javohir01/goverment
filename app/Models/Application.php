@@ -15,7 +15,7 @@ class Application extends Model
     const REJECTED = 3;
     protected $table = 'applications';
 
-    protected $fillable = ['id','deny_reason_id', 'status', 'number', 'phone_number', 'code', 'f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'remember_token', 'created_at', 'updated_at',];
+    protected $fillable = ['id','deny_reason_comment', 'deny_reason_id', 'status', 'number', 'phone_number', 'code', 'f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'remember_token', 'created_at', 'updated_at',];
 
     protected $guarded = ['id'];
 

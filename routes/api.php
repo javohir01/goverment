@@ -51,12 +51,14 @@ Route::group(['prefix' => 'resources'], function () {
     Route::get('regions', 'Api\ResourceController@regions');
     Route::get('districts', 'Api\ResourceController@districts');
     Route::get('socialStatuses', 'Api\ResourceController@socialStatuses');
+    Route::get('denyReasons', 'Api\ResourceController@denyReasons');
+
 });
 
 Route::group(['prefix' => 'applications'], function () {
     Route::get('/', 'Api\ApplicationController@index');
     Route::post('/store', 'Api\ApplicationController@store');
-    Route::put('/rejected/{id}', 'Api\ApplicationController@rejected');
+    Route::post('/rejected/', 'Api\ApplicationController@rejected');
     Route::put('/confirmed/{id}', 'Api\ApplicationController@confirmed');
     Route::get('/{id}', 'Api\ApplicationController@show');
     Route::delete('/{id}', 'Api\ApplicationController@destroy');
