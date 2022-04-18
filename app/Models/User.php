@@ -57,10 +57,6 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->roles()->first()->name == 'admin';
     }
-    public function isAdmin()
-    {
-        return $this->roles()->first()->name == 'admin';
-    }
     public function isRegion()
     {
         return $this->roles()->where('id', '2')->exists();

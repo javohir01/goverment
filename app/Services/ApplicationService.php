@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Repositories\ApplicationRepository;
 use App\Repositories\ResourceRepository;
 use Illuminate\Http\Request;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -70,8 +71,23 @@ class ApplicationService
             ->with('socialStatus')
             ->with('denyReason');
 
-//        dd($query->get());
-//        return $user->role_id;
+        $applications = app(Pipeline::class)
+            ->send($this->repo->getQuery())
+            ->through([
+                \App\QueryFilters\Pin::class,
+                \App\QueryFilters\FullName::class,
+                \App\QueryFilters\Passport::class,
+                \App\QueryFilters\Region::class,
+                \App\QueryFilters\District::class,
+                \App\QueryFilters\SocialStatus::class,
+                \App\QueryFilters\PhoneNumber::class,
+                \App\QueryFilters\Address::class,
+                \App\QueryFilters\Status::class,
+            ])
+            ->thenReturn()
+            ->with('region:id,name_cyrl')
+            ->with('district')
+            ->with('socialStatus');
         if ($user->role_id === Application::REGION_GOVERNMENT) {
             $query->where(['region_id' => $user->region_id]);
         }
@@ -79,42 +95,14 @@ class ApplicationService
             $query->where(['district_id' => $user->district_id]);
         }
 
-        if (!empty($request->all()['status'])) {
-            $query->where(['status' => $request->all()['status']]);
-        }
-        if (!empty($request->all()['region_id'])) {
-            $query->where(['region_id' => $request->all()['region_id']]);
-        }
-        if (!empty($request->all()['district_id'])) {
-            $query->where(['district_id' => $request->all()['district_id']]);
-        }
-        if (!empty($request->all()['social_id'])) {
-            $query->where(['social_id' => $request->all()['social_id']]);
-        }
-        if (!empty($request->all()['l_name'])) {
-            $query->where('Applications.l_name', 'like', '%' . $request->all()['l_name'] . '%');
-        }
-        if (!empty($request->all()['f_name'])) {
-            $query->where('Applications.f_name', 'like', '%' . $request->all()['f_name'] . '%');
-        }
-        if (!empty($request->all()['m_name'])) {
-            $query->where('Applications.m_name', 'like', '%' . $request->all()['m_name'] . '%');
-        }
-        if (!empty($request->all()['passport'])) {
-            $query->where('Applications.passport', 'like', '%' . $request->all()['passport'] . '%');
-        }
+        $applications = $applications->forPage($request->get('page', 1), $request->get('limit', 50));
+        $applications = $applications->get();
 
-//        $query->paginate($request->limit)->toArray();
-//        if($request->has('getAll')){
-//            $query = $query->paginate($query->count());
-//        } else {
-//            $query = $query->paginate($request->get('limit', 30));
-//        }
         return [
             'current_page' => $request->page ?? 1,
             'per_page' => $request->limit,
-            'data' => $query->get(),
-            'total' => $query->count() < $request->limit ? $query->count() : -1,
+            'data' => $applications,
+            'total' => $applications->count() < $request->limit ? $applications->count() : -1
         ];
     }
 
@@ -150,7 +138,8 @@ class ApplicationService
         $query = Application::query()
             ->with('region:id,name_cyrl')
             ->with('district')
-            ->with('socialStatus');
+            ->with('socialStatus')
+            ->with('status');
         $query->where(['id' => $id]);
 //            ->with('region:id, name_cyrl')
 //            ->with('district');

@@ -192,22 +192,25 @@ class ApplicationRepository
 
     public function check($request)
     {
-        $Application  = Application::find($request->id);
+//        $Application  = Application::find($request->id);
 //        return $Application->update([
 //            'status' => 2,
 //            'updated_at' => Now(),
 //        ]);
-        $application = DB::table('applications')->where('applications.number' ,$request->number)->get();
+        $query = Application::query()
+            ->with('district');
+
+        $query->where('applications.number' ,$request->number)->where('applications.code' ,$request->code)->get();
+//        dd($application);
 
 //        $Application = Application::where([
 //            ['number', $request->number]
 //        ]);
 //        dd($application);
 
-        $application->where('code', '!=', $request->code);
+//        $application->where('code', '!=', $request->code);
 
 
-        $application = $application->first();
-        return $application ? true : false;
+        return $query->first();
     }
 }

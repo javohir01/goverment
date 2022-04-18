@@ -14,7 +14,7 @@ class Citizen extends Model
     const DISTRICT_GOVERNMENT = 3;
     protected $table = 'citizens';
 
-    protected $fillable = ['f_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'number', 'phone_number', 'code', 'application_id', 'remember_token', 'created_at', 'updated_at',];
+    protected $fillable = ['f_name', 'full_name', 'social_id', 'l_name', 'm_name', 'birth_date', 'region_id', 'district_id', 'address', 'passport', 'pin', 'number', 'phone_number', 'code', 'application_id', 'remember_token', 'created_at', 'updated_at',];
 
     protected $guarded = ['id'];
 

@@ -9,6 +9,7 @@ use App\Repositories\CitizenRepository;
 use App\Repositories\ResourceRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -32,6 +33,7 @@ class CitizenService
 
     public function getAll(Request $request)
     {
+//        dd($request->all());
         $user = Auth::user();
         $query = Citizen::query()
             ->with('region:id,name_cyrl')
@@ -46,34 +48,55 @@ class CitizenService
             $query->where(['district_id' => $user->district_id]);
         }
 
-        if (!empty($request->all()['region_id'])){
-            $query->where(['region_id' => $request->all()['region_id']]);
-        }
-        if (!empty($request->all()['district_id'])){
-            $query->where(['district_id' => $request->all()['district_id']]);
-        }
-        if (!empty($request->all()['social_id'])){
-            $query->where(['social_id' => $request->all()['social_id']]);
-        }
-        if (!empty($request->all()['l_name'])){
-            $query->where('citizens.l_name', 'like', '%'. $request->all()['l_name'].'%');
-        }
-        if (!empty($request->all()['f_name'])){
-            $query->where('citizens.f_name', 'like', '%'. $request->all()['f_name'].'%');
-        }
-        if (!empty($request->all()['m_name'])){
-            $query->where('citizens.m_name', 'like', '%'. $request->all()['m_name'].'%');
-        }
-        if (!empty($request->all()['passport'])){
-            $query->where('citizens.passport', 'like', '%'. $request->all()['passport'].'%');
-        }
-
-//        $query->paginate($request->limit)->toArray();
-//        if($request->has('getAll')){
-//            $query = $query->paginate($query->count());
-//        } else {
-//            $query = $query->paginate($request->get('limit', 30));
+//        if (!empty($request->all()['region_id'])){
+//            $query->where(['region_id' => $request->all()['region_id']]);
 //        }
+//        if (!empty($request->all()['district_id'])){
+//            $query->where(['district_id' => $request->all()['district_id']]);
+//        }
+//        if (!empty($request->all()['social_id'])){
+//            $query->where(['social_id' => $request->all()['social_id']]);
+//        }
+//        if (!empty($request->all()['l_name'])){
+//            $query->where('citizens.l_name', 'like', '%'. $request->all()['l_name'].'%');
+//        }
+//        if (!empty($request->all()['f_name'])){
+//            $query->where('citizens.f_name', 'like', '%'. $request->all()['f_name'].'%');
+//        }
+//        if (!empty($request->all()['m_name'])){
+//            $query->where('citizens.m_name', 'like', '%'. $request->all()['m_name'].'%');
+//        }
+
+
+        $citizens = app(Pipeline::class)
+            ->send($this->repository->getQuery())
+            ->through([
+                \App\QueryFilters\Pin::class,
+                \App\QueryFilters\FullName::class,
+                \App\QueryFilters\Passport::class,
+                \App\QueryFilters\Region::class,
+                \App\QueryFilters\District::class,
+                \App\QueryFilters\SocialStatus::class,
+                \App\QueryFilters\PhoneNumber::class,
+                \App\QueryFilters\Address::class,
+            ])
+            ->thenReturn()
+            ->with('region:id,name_cyrl')
+            ->with('district')
+            ->with('socialStatus');
+
+//        if (!empty($request->all()['region_id'])){
+//            $citizens->where(['region_id' => $request->all()['region_id']]);
+//        }
+//        if (!empty($request->all()['district_id'])){
+//            $citizens->where(['district_id' => $request->all()['district_id']]);
+//        }
+//        if (!empty($request->all()['social_id'])) {
+//            $citizens->where(['social_id' => $request->all()['social_id']]);
+//        }
+        $citizens = $citizens->forPage($request->get('page', 1), $request->get('limit', 50));
+        $citizens = $citizens->get();
+
         return [
             'current_page' => $request->page ?? 1,
             'per_page' => $request->limit,
@@ -225,13 +248,6 @@ class CitizenService
     }
 
     public function update($request, $id){
-//        $msg = "";
-//        $validator = $this->repository->toValidate($request->all());
-//
-//        $citizen = $this->repository->update($request, $id);
-//        return ['status' => 200, 'citizen' => $citizen];
-//        $citizen = DB::table('citizens')->where(['id' => $id])->first();
-
         $msg = "";
         $validator = $this->repository->toValidate($request->all());
 
@@ -254,12 +270,9 @@ class CitizenService
 
     public function idCard($request)
     {
-//        dd($request->all());
         $data = $this->resourceRepo->getIpsPersonData($request->passport, $request->pin);
-//        dd($data);
-        if (!isset($data['result'])) return ['msg' => 'Маълумот топилмади', 'status' => 404, 'error' => []];
+        if (!isset($data['result']['document'])) return ['msg' => 'Маълумот топилмади', 'status' => 404, 'error' => []];
         else {
-
             $pin = $request->pin;
             $birth_year = $data['result']['birth_date'];
 
@@ -270,7 +283,6 @@ class CitizenService
                 "m_name" => $data['result']['patronym_latin'],
                 "birth_date" => date('d.m.Y', strtotime($birth_year)),
             ]];
-//            dd($result['citizen']);
             return ['status' => 200, 'citizen' => $result];
         }
     }
