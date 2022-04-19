@@ -558,6 +558,8 @@ class ReportRepository
 
     public function getReportAgency()
     {
+        $report = DB::table('citizens')
+            ->leftJoin('regions', 'citizens.region_id', '=', 'regions.id');
         $report = DB::table('citizen_services')
             ->select(DB::raw("EXTRACT(YEAR FROM citizen_services.created_at) as year, EXTRACT(MONTH FROM citizen_services.created_at) as month"),
                 DB::raw('COUNT(citizen_services.citizen_id) as citizens'),

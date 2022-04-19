@@ -198,7 +198,9 @@ class ApplicationRepository
 //            'updated_at' => Now(),
 //        ]);
         $query = Application::query()
-            ->with('district');
+            ->with('region')
+            ->with('district')
+            ->with('denyReason');
 
         $query->where('applications.number' ,$request->number)->where('applications.code' ,$request->code)->get();
 //        dd($application);

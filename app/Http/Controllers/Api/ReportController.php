@@ -99,6 +99,8 @@ class ReportController extends Controller
         $report = $report->select(
             'regions.name_cyrl as region_name',
             'regions.id as region_id',
+            DB::raw("sum(case when citizens.application_id is not null then 1 else 0 end) as sociala"),
+            DB::raw("sum(case when citizens.application_id is null then 1 else 0 end) as socialt"),
             DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
             DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
             DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),
@@ -123,13 +125,57 @@ class ReportController extends Controller
             ->orderBy('regions.id');
 
         $report = $report->get()->toArray();
-//        $sum = $this->getSumRegionInsurance();
-//        array_unshift($report, $sum);
-//        $all_data=['report'=>$report, 'report_user'=>$report_user];
-        return $report;
+        $reportCount['0'] = [
+            'sociala'=>0,
+            'socialt'=>0,
+            'social1'=>0,
+            'social2'=>0,
+            'social3'=>0,
+            'social4'=>0,
+            'social5'=>0,
+            'social6'=>0,
+            'social7'=>0,
+            'social8'=>0,
+            'social9'=>0,
+            'social10'=>0,
+            'social11'=>0,
+            'social12'=>0,
+            'social13'=>0,
+            'social14'=>0,
+            'social15'=>0,
+            'social16'=>0,
+            'social17'=>0,
+            'social18'=>0,
+        ];
+        foreach ($report as $r){
+            $reportCount['0']['sociala']  += $r->sociala;
+            $reportCount['0']['socialt']  += $r->socialt;
+            $reportCount['0']['social1']  += $r->social1;
+            $reportCount['0']['social2']  += $r->social2;
+            $reportCount['0']['social3']  += $r->social3;
+            $reportCount['0']['social4']  += $r->social4;
+            $reportCount['0']['social5']  += $r->social5;;
+            $reportCount['0']['social6']  += $r->social6;
+            $reportCount['0']['social7']  += $r->social7;
+            $reportCount['0']['social8']  += $r->social8;;
+            $reportCount['0']['social9']  += $r->social9;
+            $reportCount['0']['social10']  += $r->social10;
+            $reportCount['0']['social11']  += $r->social11;
+            $reportCount['0']['social12']  += $r->social12;
+            $reportCount['0']['social13']  += $r->social13;
+            $reportCount['0']['social14']  += $r->social14;
+            $reportCount['0']['social15']  += $r->social15;
+            $reportCount['0']['social16']  += $r->social16;
+            $reportCount['0']['social17']  += $r->social17;
+            $reportCount['0']['social18']  += $r->social18;
+        }
+//        dd($reportCount);
+
+        return response()->successJson(['report' => $report, 'report_count' => $reportCount]);
     }
     public function districts($id)
     {
+//        dd('disds');
         $region_id = $id;
         $report = DB::table('citizens')
             ->where('citizens.region_id' ,$region_id)
@@ -138,6 +184,8 @@ class ReportController extends Controller
             ->select(
                 'districts.name_cyrl as district_name',
                 'districts.id as district_id',
+                DB::raw("sum(case when citizens.application_id is not null then 1 else 0 end) as sociala"),
+                DB::raw("sum(case when citizens.application_id is null then 1 else 0 end) as socialt"),
                 DB::raw("sum(case when citizens.social_id=1 then 1 else 0 end) as social1"),
                 DB::raw("sum(case when citizens.social_id=2 then 1 else 0 end) as social2"),
                 DB::raw("sum(case when citizens.social_id=3 then 1 else 0 end) as social3"),
@@ -160,264 +208,118 @@ class ReportController extends Controller
             ->groupBy('districts.id', 'districts.name_cyrl')
             ->orderBy('districts.id')
             ->get()->toArray();
-        return response()->successJson(['report' => $report]);;
-    }
-    public function serviceCounts()
-    {
-        $report=$this->repo->getServiceCounts();
-        return $report;
-    }
-    public function CitizensServices()
-    {
-        $report = $this->repo->getCitizensServices();
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
+        $reportCount['0'] = [
+            'sociala'=>0,
+            'socialt'=>0,
+            'social1'=>0,
+            'social2'=>0,
+            'social3'=>0,
+            'social4'=>0,
+            'social5'=>0,
+            'social6'=>0,
+            'social7'=>0,
+            'social8'=>0,
+            'social9'=>0,
+            'social10'=>0,
+            'social11'=>0,
+            'social12'=>0,
+            'social13'=>0,
+            'social14'=>0,
+            'social15'=>0,
+            'social16'=>0,
+            'social17'=>0,
+            'social18'=>0,
+        ];
+        foreach ($report as $r){
+            $reportCount['0']['sociala']  += $r->sociala;
+            $reportCount['0']['socialt']  += $r->socialt;
+            $reportCount['0']['social1']  += $r->social1;
+            $reportCount['0']['social2']  += $r->social2;
+            $reportCount['0']['social3']  += $r->social3;
+            $reportCount['0']['social4']  += $r->social4;
+            $reportCount['0']['social5']  += $r->social5;;
+            $reportCount['0']['social6']  += $r->social6;
+            $reportCount['0']['social7']  += $r->social7;
+            $reportCount['0']['social8']  += $r->social8;;
+            $reportCount['0']['social9']  += $r->social9;
+            $reportCount['0']['social10']  += $r->social10;
+            $reportCount['0']['social11']  += $r->social11;
+            $reportCount['0']['social12']  += $r->social12;
+            $reportCount['0']['social13']  += $r->social13;
+            $reportCount['0']['social14']  += $r->social14;
+            $reportCount['0']['social15']  += $r->social15;
+            $reportCount['0']['social16']  += $r->social16;
+            $reportCount['0']['social17']  += $r->social17;
+            $reportCount['0']['social18']  += $r->social18;
         }
-        return response()->json($this->response);
-    }
-
-
-
-    public function reportAgency(){
-        $report = $this->repo->getReportAgency();
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function reportEmploymentDepartment(){
-        $report = $this->repo->getEmploymentDepartment();
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function reportEmploymentDepartmentCitizens(Request $request){
-        $report = $this->repo->getEmploymentDepartmentCitizens($request);
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
-        }
-        return response()->json($this->response);
+        return response()->successJson(['report' => $report, 'report_count' => $reportCount]);
     }
 
-    public function reportAgencyApplicationTwo(){
-        $report = $this->repo->getReportAgencyApplicationTwo();     // xba hisobot 2-ilova
-        if ($report) {
-//            $this->response['result'] = $report;
-            return $report;
-        } else {
-            $this->response['success'] = false;
-        }
-        return response()->json($this->response);
-    }
+    public function applicationRegions(){
+        $report = DB::table('applications')
+            ->LeftJoin('regions', 'applications.region_id', '=', 'regions.id');
 
-    public function reportAgencyApplicationThree(){
-        $report = $this->repo->getReportAgencyApplicationThree();   // xba hisobot 3-ilova
-        if ($report) {
-            $report = $report->orderBy('id', 'desc');
-            if (\request()->get('getAll', false)) {
-                $report = $report->get();
-            } else {
-                $report = $report->paginate(request()->get('limit', 10));
-            }
-            $report_employment = ReportAgencyApplicationThreeResource::collection($report);
-            return $report_employment;
-//            $this->response['result'] = $report_employment;
-        } else {
-            $this->response['success'] = false;
-            return response()->json($this->response);
-        }
-    }
+        $report = $report->select(
+            'regions.name_cyrl as region_name',
+            'regions.id as region_id',
+            DB::raw("sum(case when applications.status is not null then 1 else 0 end) as all"),
+            DB::raw("sum(case when applications.status=0 then 1 else 0 end) as new"),
+            DB::raw("sum(case when applications.status=1 then 1 else 0 end) as confirmed"),
+            DB::raw("sum(case when applications.status=2 then 1 else 0 end) as rejected"),
+        )
+            ->whereNotNull(['regions.id'])
+            ->groupBy('regions.id', 'regions.name_cyrl')
+            ->orderBy('regions.id');
 
-    public function reportAgencyApplicationFour(){
-        $report = $this->repo->getReportAgencyApplicationFour();    // xba hisobot 4-ilova
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
+        $report = $report->get()->toArray();
+        $reportCount['0'] = [
+            'all'=>0,
+            'new'=>0,
+            'confirmed'=>0,
+            'rejected'=>0,
+        ];
+        foreach ($report as $r){
+            $reportCount['0']['all']  += $r->all;
+            $reportCount['0']['new']  += $r->new;
+            $reportCount['0']['confirmed']  += $r->confirmed;
+            $reportCount['0']['rejected']  += $r->rejected;
         }
-        return response()->json($this->response);
+        return response()->successJson(['report' => $report, 'report_count' => $reportCount]);
     }
+    public function applicationDistricts($id){
+        $region_id = $id;
+        $report = DB::table('applications')
+            ->where('applications.region_id' ,$region_id)
+            ->leftJoin('districts','applications.district_id','=','districts.id');
 
-    public function reportAgencyApplicationFive(){
-        $report = $this->repo->getReportAgencyApplicationFive();    // xba hisobot 5-ilova
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
-        }
-        return response()->json($this->response);
-    }
+        $report = $report->select(
+            'districts.name_cyrl as district_name',
+            'districts.id as district_id',
+            DB::raw("sum(case when applications.status is not null then 1 else 0 end) as all"),
+            DB::raw("sum(case when applications.status=0 then 1 else 0 end) as new"),
+            DB::raw("sum(case when applications.status=1 then 1 else 0 end) as confirmed"),
+            DB::raw("sum(case when applications.status=2 then 1 else 0 end) as rejected"),
+        )
+            ->whereNotNull(['districts.id'])
+            ->groupBy('districts.id', 'districts.name_cyrl')
+            ->orderBy('districts.id');
 
-    public function reportAgencyApplicationSix(){
-        $report = $this->repo->getReportAgencyApplicationSix();    // xba hisobot 5-ilova
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
-        }
-        return response()->json($this->response);
-    }
+        $report = $report->get()->toArray();
+        $reportCount['0'] = [
+            'all'=>0,
+            'new'=>0,
+            'confirmed'=>0,
+            'rejected'=>0,
 
-    public function reportAgencyApplicationSeven(){
-        $report = $this->repo->getReportAgencyApplicationSeven();  // xba hisobot 7-ilova
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
+        ];
+        foreach ($report as $r){
+            $reportCount['0']['all']  += $r->all;
+            $reportCount['0']['new']  += $r->new;
+            $reportCount['0']['confirmed']  += $r->confirmed;
+            $reportCount['0']['rejected']  += $r->rejected;
         }
-        return response()->json($this->response);
-    }
 
-    public function CitizenServicesCitizens()
-    {
-        $report = $this->repo->getCitizenServicesCitizens();
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function AbkmCitizenServicesCitizens()
-    {
-        $report = $this->repo->getAbkmCitizenServicesCitizens();
-        if ($report) {
-            $this->response['result'] = $report;
-        } else {
-            $this->response['success'] = false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function needHelpServices()
-    {
-        $report=$this->repo->getNeedHelpServices();
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
-    }
-    public function needHelpCitizens()
-    {
-        $report=$this->repo->getNeedHelpCitizens();
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function educationReportOne()
-    {
-        $report = $this->repo->getEducationReportOne();
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function educationReportOneByCity($region_id)
-    {
-        $report = $this->repo->getEducationReportOneByCity($region_id);
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function educationReportTwo()
-    {
-        $report = $this->repo->getEducationReportTwo();
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function educationReportThree()
-    {
-        $report = $this->repo->getEducationReportThree();
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function reportABKM()
-    {
-        $report = $this->repo->getABKMReport();
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function reportABKMByCity()
-    {
-        $report = $this->repo->getABKMReportByCity();
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function reportSectorCitizenInfo()
-    {
-        $report = $this->repo->getReportSectorCitizenInfo();
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
-    }
-
-    public function sectorCitizenInfo()
-    {
-        $report = $this->repo->getSectorCitizenInfo();
-        if($report){
-            $this->response['result']=$report;
-        }
-        else{
-            $this->response['success']=false;
-        }
-        return response()->json($this->response);
+        return response()->successJson(['report' => $report, 'report_count' => $reportCount]);
     }
 
 }

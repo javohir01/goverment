@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Application;
 use App\Models\Citizen;
 use App\Models\Region;
 use App\Models\Role;
@@ -79,6 +80,7 @@ class CitizenService
                 \App\QueryFilters\SocialStatus::class,
                 \App\QueryFilters\PhoneNumber::class,
                 \App\QueryFilters\Address::class,
+                \App\QueryFilters\BirthDate::class,
             ])
             ->thenReturn()
             ->with('region:id,name_cyrl')
@@ -275,15 +277,20 @@ class CitizenService
         else {
             $pin = $request->pin;
             $birth_year = $data['result']['birth_date'];
-
-            $result = ['citizen' => [
-                'pin' => $pin,
-                'l_name' => $data['result']['surname_latin'],
-                "f_name" => $data['result']['name_latin'],
-                "m_name" => $data['result']['patronym_latin'],
-                "birth_date" => date('d.m.Y', strtotime($birth_year)),
-            ]];
-            return ['status' => 200, 'citizen' => $result];
+            $query = Citizen::query()->where(['pin' => $pin]);
+            $citizen = $query->get();
+            if(count($citizen) === 0) {
+                $result = ['citizen' => [
+                    'pin' => $pin,
+                    'l_name' => $data['result']['surname_latin'],
+                    "f_name" => $data['result']['name_latin'],
+                    "m_name" => $data['result']['patronym_latin'],
+                    "birth_date" => date('d.m.Y', strtotime($birth_year)),
+                ]];
+                return ['status' => 200, 'citizen' => $result];
+            } else {
+                return ['msg' => 'Bu ma\'lumotlar bazada mavjud', 'status' => 409, 'citizen' => $citizen];
+            }
         }
     }
 

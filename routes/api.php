@@ -42,8 +42,10 @@ Route::middleware(['auth:api'])->group(function () {
 
     });
     Route::group(['prefix' => 'report'], function () {
-        Route::get('report', 'Api\ReportController@report');
+        Route::get('report', 'Api\ReportController@regions');
         Route::get('districts/{id}', 'Api\ReportController@districts');
+        Route::get('application-regions', 'Api\ReportController@applicationRegions');
+        Route::get('application-districts/{id}', 'Api\ReportController@applicationDistricts');
         Route::get('socialStatuses', 'Api\ResourceController@socialStatuses');
     });
 });

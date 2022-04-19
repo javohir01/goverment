@@ -195,7 +195,7 @@ class ApplicationService
 
         $data = $this->resourceRepo->getIpsPersonData($request->passport, $request->pin);
 //        dd($data);
-        if (!isset($data['result'])) return ['msg' => 'Маълумот топилмади', 'status' => 404, 'error' => []];
+        if (!isset($data['result']['document'])) return ['msg' => 'Маълумот топилмади', 'status' => 404, 'error' => []];
         else {
             $pin = $request->pin;
             $birth_year = $data['result']['birth_date'];
